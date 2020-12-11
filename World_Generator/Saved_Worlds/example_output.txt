@@ -1,0 +1,91 @@
+World Size Info
+-----------------------------------
+World Size (km): 6400
+Surface Gravity (gs): 0.35
+-----------------------------------
+
+World Atmosphere Info
+-----------------------------------
+Atmosphere: Thin
+Pressure: 0.43 to 0.70
+Survival Gear Required: None
+Minimum TL: 0
+-----------------------------------
+
+World Temperature Info
+-----------------------------------
+Type: Temperate
+Average Temperature (degrees Celsius): 0 to 30
+Description: Temperate world. Earthlike. Liquid and vaporised water are common, moderate ice caps.
+-----------------------------------
+
+World Hydrographics Info
+-----------------------------------
+Hydrographic Percentage: 6%-15%
+Description: Dry world.
+-----------------------------------
+
+World Population Info
+-----------------------------------
+Population: Tens of Billions
+Range: 10000000000+
+Description: Crowded world.
+-----------------------------------
+
+World Government Info
+-----------------------------------
+Government: Impersonal Bureaucracy
+Description: Ruling functions are performed by agencies which have become insulated from the governed citizens.
+-----------------------------------
+
+World Factions Info
+-----------------------------------
+Name: Faction1
+Relative Strength: Notable group – significant support, well known
+
+Name: Faction2
+Relative Strength: Minor group – some supporters
+-----------------------------------
+
+World Illegal Possessions Info
+-----------------------------------
+Law Level: 9
+Weapons: Any weapons.
+Drugs: All drugs.
+Information: Any data from offworld. No free press.
+Technology: TL 3 items.
+Travellers: No offworlders permitted.
+Psionics: All psionics.
+-----------------------------------
+
+World Cultural Differences Info
+-----------------------------------
+Culture: Degenerate – the culture is falling apart and is on the brink of war or economic collapse. Violent protests are common and the social order is decaying.
+-----------------------------------
+
+World Starport Info
+-----------------------------------
+Tech Level: 5
+Starport Class: D
+Quality: Poor
+Berthing Cost (Cr): 10
+Fuel: Unrefined
+Facilities: Limited Repair
+Bases: Scout
+-----------------------------------
+
+World Trade Code Info
+-----------------------------------
+Classification: High Population
+Code: Hi
+Description: High Population worlds have a population in the billions.
+
+Classification: Low Technology
+Code: Lt
+Description: Low Technology worlds are preindustrial and cannot produce advanced goods.
+
+Classification: Poor
+Code: Po
+Description: Poor worlds lack resources, viable land or sufficient population to be anything other than marginal colonies.
+-----------------------------------
+
