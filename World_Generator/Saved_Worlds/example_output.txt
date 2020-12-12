@@ -1,15 +1,15 @@
 World Size Info
 -----------------------------------
-World Size (km): 6400
-Surface Gravity (gs): 0.35
+World Size (km): 11200
+Surface Gravity (gs): 0.90
 -----------------------------------
 
 World Atmosphere Info
 -----------------------------------
-Atmosphere: Thin
-Pressure: 0.43 to 0.70
-Survival Gear Required: None
-Minimum TL: 0
+Atmosphere: Dense, Tainted
+Pressure: 1.50 to 2.49
+Survival Gear Required: Filter
+Minimum TL: 3
 -----------------------------------
 
 World Temperature Info
@@ -21,71 +21,72 @@ Description: Temperate world. Earthlike. Liquid and vaporised water are common, 
 
 World Hydrographics Info
 -----------------------------------
-Hydrographic Percentage: 6%-15%
-Description: Dry world.
+Hydrographic Percentage: 56%-65%
+Description: Large oceans.
 -----------------------------------
 
 World Population Info
 -----------------------------------
-Population: Tens of Billions
-Range: 10000000000+
-Description: Crowded world.
+Population: Hundreds of thousands
+Range: 100000+
+Description: Average city.
 -----------------------------------
 
 World Government Info
 -----------------------------------
-Government: Impersonal Bureaucracy
-Description: Ruling functions are performed by agencies which have become insulated from the governed citizens.
+Government: Captive Government
+Description: Ruling functions are performed by an imposed leadership answerable to an outside group.
 -----------------------------------
 
 World Factions Info
 -----------------------------------
 Name: Faction1
-Relative Strength: Notable group – significant support, well known
-
-Name: Faction2
-Relative Strength: Minor group – some supporters
+Relative Strength: Obscure group – few have heard of them, no popular support
 -----------------------------------
 
 World Illegal Possessions Info
 -----------------------------------
-Law Level: 9
-Weapons: Any weapons.
-Drugs: All drugs.
-Information: Any data from offworld. No free press.
-Technology: TL 3 items.
-Travellers: No offworlders permitted.
-Psionics: All psionics.
+Law Level: 8
+Weapons: All bladed weapons, stunners.
+Drugs: Medicinal drugs.
+Information: Information technology, any non-critical data from offworld, personal media.
+Technology: TL 5 items.
+Travellers: Landing permitted only to imperial agents.
+Psionics: Psionic-related technology banned.
 -----------------------------------
 
 World Cultural Differences Info
 -----------------------------------
-Culture: Degenerate – the culture is falling apart and is on the brink of war or economic collapse. Violent protests are common and the social order is decaying.
+Culture: Fashion – fine clothing and decoration are considered vitally important in the culture. Underdressed characters have no standing here.
 -----------------------------------
 
 World Starport Info
 -----------------------------------
-Tech Level: 5
-Starport Class: D
-Quality: Poor
-Berthing Cost (Cr): 10
+Starport Class: C
+Quality: Routine
+Berthing Cost (Cr): 400
 Fuel: Unrefined
-Facilities: Limited Repair
-Bases: Scout
+Facilities: Shipyard (small craft) Repair
+Bases: None
+-----------------------------------
+
+World Technology Info
+-----------------------------------
+Tech Level: 9
 -----------------------------------
 
 World Trade Code Info
 -----------------------------------
-Classification: High Population
-Code: Hi
-Description: High Population worlds have a population in the billions.
+Classification: Agricultural
+Code: Ag
+Description: Agricultural worlds are dedicated to farming and food production. Often, they are divided into vast semi-feudal estates.
 
-Classification: Low Technology
-Code: Lt
-Description: Low Technology worlds are preindustrial and cannot produce advanced goods.
+Classification: Garden
+Code: Ga
+Description: Garden worlds are Earth-like.
 
-Classification: Poor
-Code: Po
-Description: Poor worlds lack resources, viable land or sufficient population to be anything other than marginal colonies.
+Classification: Non-Industrial
+Code: Ni
+Description: Non-Industrial worlds are too low-population to maintain an industrial base.
 -----------------------------------
 

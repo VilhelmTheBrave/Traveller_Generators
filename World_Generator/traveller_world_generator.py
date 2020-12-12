@@ -761,13 +761,10 @@ def generate_world(worldGenOptions):
 
     # Starport
     worldStarport  = 0
-    worldTechLevel = 0
     starportString = ""
     while True:
       worldStarport      = gen_world_star_port() if worldPopulation > 0 else 0
-      worldTechLevel     = gen_world_tech_level(worldStarport, worldSize, worldAtmosphere, worldHydrographics, worldPopulation, worldGovernment) if worldPopulation > 0 else 0
       starportString     = "World Starport Info\n" + separatorString
-      starportString    += "Tech Level: " + str(worldTechLevel) + newLine
       worldStarportTable = gen_world_star_port_table(worldStarport)
       starportString    += get_table_entry(WORLD_STAR_PORT_TABLE_HEADER, worldStarportTable, worldStarport) + separatorString
       if worldGenOptions == WORLD_GEN_OPTIONS.ReRoll.value:
@@ -780,28 +777,35 @@ def generate_world(worldGenOptions):
 
     printString += starportString + newLine
 
-    # Trade Codes
-    worldTradeCodes = []
-    tradeString     = ""
+    # Tech
+    worldTechLevel = 0
+    techString = ""
     while True:
-      tradeString     = "World Trade Code Info\n" + separatorString
-      worldTradeCodes = gen_world_trade_codes(worldSize, worldAtmosphere, worldHydrographics, worldPopulation, worldGovernment, worldLawLevel, worldTechLevel)
-      tradeCodeListLength = len(worldTradeCodes)
-      if tradeCodeListLength > 0:
-        tIndex = 0
-        while tIndex < tradeCodeListLength:
-          tradeString += get_table_entry(WORLD_TRADE_TABLE_HEADER, WORLD_TRADE_TABLE, worldTradeCodes[tIndex]) + (newLine if not tIndex == tradeCodeListLength - 1 else "")
-          tIndex += 1
-      else:
-        tradeString += "None\n"
-      tradeString += separatorString
+      worldTechLevel = gen_world_tech_level(worldStarport, worldSize, worldAtmosphere, worldHydrographics, worldPopulation, worldGovernment) if worldPopulation > 0 else 0
+      techString     = "World Technology Info\n" + separatorString
+      techString    += "Tech Level: " + str(worldTechLevel) + newLine + separatorString
       if worldGenOptions == WORLD_GEN_OPTIONS.ReRoll.value:
-        worldGenOptions = handle_world_gen_dialog(worldGenOptions, tradeString)
+        worldGenOptions = handle_world_gen_dialog(worldGenOptions, techString)
       if worldGenOptions == WORLD_GEN_OPTIONS.Continue.value:
         worldGenOptions = WORLD_GEN_OPTIONS.ReRoll.value
         break
       elif worldGenOptions == WORLD_GEN_OPTIONS.Quit.value:
         break
+
+    printString += techString + newLine
+
+    # Trade Codes
+    tradeString     = "World Trade Code Info\n" + separatorString
+    worldTradeCodes = gen_world_trade_codes(worldSize, worldAtmosphere, worldHydrographics, worldPopulation, worldGovernment, worldLawLevel, worldTechLevel)
+    tradeCodeListLength = len(worldTradeCodes)
+    if tradeCodeListLength > 0:
+      tIndex = 0
+      while tIndex < tradeCodeListLength:
+        tradeString += get_table_entry(WORLD_TRADE_TABLE_HEADER, WORLD_TRADE_TABLE, worldTradeCodes[tIndex]) + (newLine if not tIndex == tradeCodeListLength - 1 else "")
+        tIndex += 1
+    else:
+      tradeString += "None\n"
+    tradeString += separatorString
 
     printString += tradeString + newLine
 
