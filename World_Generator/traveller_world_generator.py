@@ -553,16 +553,16 @@ def save_world_dialog(worldInfo):
         with open(saveTextFileLocation, "w") as outTextFile:
           outTextFile.write(worldInfo)
         clear_screen()
-        print(worldInfo + "\n\nWorld Saved\n")
+        print(worldInfo + "World Saved\n")
       else:
         clear_screen()
-        print(worldInfo + "\n\nWorld name empty, skipping save\n")
+        print(worldInfo + "World name empty, skipping save\n")
     else:
       clear_screen()
       print("Generate a world first\n")
   except KeyboardInterrupt:
     clear_screen()
-    print(worldInfo + "\n\nFailed to save world\n")
+    print(worldInfo + "Failed to save world\n")
 #--------------------------------------------------#
 
 # ReRoll or continue world generation
