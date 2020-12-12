@@ -565,8 +565,13 @@ def save_world_dialog(worldInfo):
     print(worldInfo + "Failed to save world\n")
 #--------------------------------------------------#
 
-# ReRoll or continue world generation
+# Generate a new world
 #--------------------------------------------------#
+class WORLD_GEN_OPTIONS(Enum):
+  ReRoll   = 1
+  Continue = 2
+  Quit     = 3
+
 def handle_world_gen_dialog(worldGenOptions, propertyString):
   currentOption = 0
   while not currentOption in (WORLD_GEN_OPTIONS.ReRoll.value, WORLD_GEN_OPTIONS.Continue.value, WORLD_GEN_OPTIONS.Quit.value):
@@ -577,14 +582,6 @@ def handle_world_gen_dialog(worldGenOptions, propertyString):
     currentOption = int(currentOptionInput) if currentOptionInput.isdigit() else 0
   worldGenOptions = currentOption
   return worldGenOptions
-#--------------------------------------------------#
-
-# Generate a new world
-#--------------------------------------------------#
-class WORLD_GEN_OPTIONS(Enum):
-  ReRoll   = 1
-  Continue = 2
-  Quit     = 3
 
 def generate_world(worldGenOptions):
   try:
