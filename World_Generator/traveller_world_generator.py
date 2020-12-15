@@ -656,7 +656,7 @@ def handle_world_trade_gen(funcArgs):
   else:
     tradeString += "None\n"
   tradeString += SEPARATOR_STRING
-  return tradeString, worldTradeCodes
+  return tradeString
 #--------------------------------------------------#
 
 # Generate a new world
@@ -733,8 +733,7 @@ def generate_world(worldGenOption):
 
     # Trade Codes
     tradeArgs = [worldSize, worldAtmosphere, worldHydrographics, worldPopulation, worldGovernment, worldLawLevel, worldTechLevel]
-    tradeString, worldTradeCodes = handle_world_trade_gen(tradeArgs)
-    printString += tradeString + NEW_LINE
+    printString += handle_world_trade_gen(tradeArgs) + NEW_LINE
 
     clear_screen()
     print(printString)
