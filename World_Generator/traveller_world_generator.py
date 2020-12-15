@@ -6,6 +6,17 @@ from sys import path
 path.append("..")
 from support_functions import *
 
+# Global Vars
+#--------------------------------------------------#
+class WORLD_GEN_OPTIONS(Enum):
+  ReRoll   = 1
+  Continue = 2
+  Quit     = 3
+
+SEPARATOR_STRING  = "-----------------------------------\n"
+NEW_LINE = "\n"
+#--------------------------------------------------#
+
 # World Size
 #--------------------------------------------------#
 WORLD_SIZE_TABLE_HEADER = ("World Size (km)", "Surface Gravity (gs)")
@@ -494,257 +505,260 @@ def gen_world_trade_codes(sizeNum, atmosNum, hydroNum, popNum, govNum, lawNum, t
   return tradeCodes
 #--------------------------------------------------#
 
+# Loop to handle interactive world gen
+#--------------------------------------------------#
+def do_interactive_gen_loop(worldGenOption, loopFunc, funcArgs):
+  while True:
+    retString, retValue = loopFunc(funcArgs)
+    if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
+      worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, retString)
+    if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
+      worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
+      break
+    elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
+      break
+  return worldGenOption, retString, retValue
+#--------------------------------------------------#
+
+# World size generation
+#--------------------------------------------------#
+def handle_world_size_gen(funcArgs):
+  worldSize   = gen_world_size()
+  sizeString  = "World Size Info\n" + SEPARATOR_STRING
+  sizeString += get_table_entry(WORLD_SIZE_TABLE_HEADER, WORLD_SIZE_TABLE, worldSize) + SEPARATOR_STRING
+  return sizeString, worldSize
+#--------------------------------------------------#
+
+# World atmosphere generation
+#--------------------------------------------------#
+def handle_world_atmos_gen(funcArgs):
+  worldSize         = funcArgs[0]
+  worldAtmosphere   = gen_world_atmosphere(worldSize)
+  atmosphereString  = "World Atmosphere Info\n" + SEPARATOR_STRING
+  atmosphereString += get_table_entry(WORLD_ATMOSPHERE_TABLE_HEADER, WORLD_ATMOSPHERE_TABLE, worldAtmosphere) + SEPARATOR_STRING
+  return atmosphereString, worldAtmosphere
+#--------------------------------------------------#
+
+# World temperature generation
+#--------------------------------------------------#
+def handle_world_temp_gen(funcArgs):
+  worldAtmosphere    = funcArgs[0]
+  worldTemperature   = gen_world_temperature(worldAtmosphere)
+  temperatureString  = "World Temperature Info\n" + SEPARATOR_STRING
+  temperatureString += get_table_entry(WORLD_TEMPERATURE_TABLE_HEADER, WORLD_TEMPERATURE_TABLE, worldTemperature)
+  if worldAtmosphere in (0,1):
+    temperatureString += "Notes: Temperature swings from roasting during the day to frozen at night.\n" + SEPARATOR_STRING
+  else:
+    temperatureString += SEPARATOR_STRING
+  return temperatureString, worldTemperature
+#--------------------------------------------------#
+
+# World hydrographics generation
+#--------------------------------------------------#
+def handle_world_hydro_gen(funcArgs):
+  worldSize            = funcArgs[0]
+  worldAtmosphere      = funcArgs[1]
+  worldTemperature     = funcArgs[2]
+  worldHydrographics   = gen_world_hydrographics(worldSize, worldAtmosphere, worldTemperature)
+  hydrographicsString  = "World Hydrographics Info\n" + SEPARATOR_STRING
+  hydrographicsString += get_table_entry(WORLD_HYDROGRAPHICS_TABLE_HEADER, WORLD_HYDROGRAPHICS_TABLE, worldHydrographics) + SEPARATOR_STRING
+  return hydrographicsString, worldHydrographics
+#--------------------------------------------------#
+
+# World population generation
+#--------------------------------------------------#
+def handle_world_pop_gen(funcArgs):
+  worldPopulation   = gen_world_population()
+  populationString  = "World Population Info\n" + SEPARATOR_STRING
+  populationString += get_table_entry(WORLD_POPULATION_TABLE_HEADER, WORLD_POPULATION_TABLE, worldPopulation) + SEPARATOR_STRING
+  return populationString, worldPopulation
+#--------------------------------------------------#
+
+# World government generation
+#--------------------------------------------------#
+def handle_world_gov_gen(funcArgs):
+  populationNotZero = funcArgs[0]
+  worldPopulation   = funcArgs[1]
+  worldGovernment   = gen_world_government(worldPopulation) if populationNotZero else 0
+  governmentString  = "World Government Info\n" + SEPARATOR_STRING
+  governmentString += get_table_entry(WORLD_GOVERNMENT_TABLE_HEADER, WORLD_GOVERNMENT_TABLE, worldGovernment) + SEPARATOR_STRING
+  return governmentString, worldGovernment
+#--------------------------------------------------#
+
+# World factions generation
+#--------------------------------------------------#
+def handle_world_factions_gen(funcArgs):
+  populationNotZero = funcArgs[0]
+  worldGovernment   = funcArgs[1]
+  worldFactions     = gen_world_factions(worldGovernment) if populationNotZero else []
+  factionString     = "World Factions Info\n" + SEPARATOR_STRING
+  factionListLength = len(worldFactions)
+  if factionListLength > 0:
+    fIndex = 0
+    while fIndex < factionListLength:
+      factionString += NEW_LINE if fIndex > 0 else ""
+      factionString += "Name: Faction" + str(fIndex + 1)  + NEW_LINE
+      factionString += get_table_entry(WORLD_FACTIONS_TABLE_HEADER, WORLD_FACTIONS_TABLE, worldFactions[fIndex])
+      fIndex += 1
+  else:
+    factionString += "None\n"
+  factionString += SEPARATOR_STRING
+  return factionString, worldFactions
+#--------------------------------------------------#
+
+# World law generation
+#--------------------------------------------------#
+def handle_world_law_gen(funcArgs):
+  populationNotZero = funcArgs[0]
+  worldGovernment   = funcArgs[1]
+  worldLawLevel     = gen_world_law_level(worldGovernment) if populationNotZero else 0
+  lawString         = "World Illegal Possessions Info\n" + SEPARATOR_STRING
+  lawString        += "Law Level: " + str(worldLawLevel) + NEW_LINE
+  lawString        += get_table_entry(WORLD_LAW_TABLE_HEADER, WORLD_LAW_TABLE, worldLawLevel) + SEPARATOR_STRING
+  return lawString, worldLawLevel
+#--------------------------------------------------#
+
+# World culture generation
+#--------------------------------------------------#
+def handle_world_culture_gen(funcArgs):
+  populationNotZero = funcArgs[0]
+  worldCulture      = gen_world_cultural_differences() if populationNotZero else 0
+  cultureString     = "World Cultural Differences Info\n" + SEPARATOR_STRING
+  cultureString    += get_table_entry(WORLD_CULTURE_TABLE_HEADER, WORLD_CULTURE_TABLE, worldCulture) + SEPARATOR_STRING
+  return cultureString, worldCulture
+#--------------------------------------------------#
+
+# World starport generation
+#--------------------------------------------------#
+def handle_world_starport_gen(funcArgs):
+  populationNotZero  = funcArgs[0]
+  worldStarport      = gen_world_star_port() if populationNotZero else 0
+  worldStarportTable = gen_world_star_port_table(worldStarport)
+  starportString     = "World Starport Info\n" + SEPARATOR_STRING
+  starportString    += get_table_entry(WORLD_STAR_PORT_TABLE_HEADER, worldStarportTable, worldStarport) + SEPARATOR_STRING
+  return starportString, worldStarport
+#--------------------------------------------------#
+
+# World tech generation
+#--------------------------------------------------#
+def handle_world_tech_gen(funcArgs):
+  populationNotZero  = funcArgs[0]
+  worldStarport      = funcArgs[1]
+  worldSize          = funcArgs[2]
+  worldAtmosphere    = funcArgs[3]
+  worldHydrographics = funcArgs[4]
+  worldPopulation    = funcArgs[5]
+  worldGovernment    = funcArgs[6]
+  worldTechLevel     = gen_world_tech_level(worldStarport, worldSize, worldAtmosphere, worldHydrographics, worldPopulation, worldGovernment) if populationNotZero else 0
+  techString         = "World Technology Info\n" + SEPARATOR_STRING
+  techString        += "Tech Level: " + str(worldTechLevel) + NEW_LINE + SEPARATOR_STRING
+  return techString, worldTechLevel
+#--------------------------------------------------#
+
+# World trade code generation
+#--------------------------------------------------#
+def handle_world_trade_gen(funcArgs):
+  worldSize           = funcArgs[0]
+  worldAtmosphere     = funcArgs[1]
+  worldHydrographics  = funcArgs[2]
+  worldPopulation     = funcArgs[3]
+  worldGovernment     = funcArgs[4]
+  worldLawLevel       = funcArgs[5]
+  worldTechLevel      = funcArgs[6]
+  worldTradeCodes     = gen_world_trade_codes(worldSize, worldAtmosphere, worldHydrographics, worldPopulation, worldGovernment, worldLawLevel, worldTechLevel)
+  tradeString         = "World Trade Code Info\n" + SEPARATOR_STRING
+  tradeCodeListLength = len(worldTradeCodes)
+  if tradeCodeListLength > 0:
+    tIndex = 0
+    while tIndex < tradeCodeListLength:
+      tradeString += get_table_entry(WORLD_TRADE_TABLE_HEADER, WORLD_TRADE_TABLE, worldTradeCodes[tIndex]) + (NEW_LINE if not tIndex == tradeCodeListLength - 1 else "")
+      tIndex += 1
+  else:
+    tradeString += "None\n"
+  tradeString += SEPARATOR_STRING
+  return tradeString, worldTradeCodes
+#--------------------------------------------------#
+
 # Generate a new world
 #--------------------------------------------------#
-class WORLD_GEN_OPTIONS(Enum):
-  ReRoll   = 1
-  Continue = 2
-  Quit     = 3
-
 def generate_world(worldGenOption):
   try:
-    separatorString  = "-----------------------------------\n"
-    newLine = "\n"
-
     # Size
-    worldSize  = 0
-    sizeString = ""
-    while True:
-      sizeString  = "World Size Info\n" + separatorString
-      worldSize   = gen_world_size()
-      sizeString += get_table_entry(WORLD_SIZE_TABLE_HEADER, WORLD_SIZE_TABLE, worldSize) + separatorString
-      if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
-        worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, sizeString)
-      if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
-        worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
-        break
-      elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
-        break
-
-    printString = sizeString + newLine
+    noArgs = []
+    worldGenOption, sizeString, worldSize = do_interactive_gen_loop(worldGenOption, handle_world_size_gen, noArgs)
+    printString = sizeString + NEW_LINE
 
     # Atmosphere
-    worldAtmosphere  = 0
-    atmosphereString = ""
-    while True:
-      atmosphereString  = "World Atmosphere Info\n" + separatorString
-      worldAtmosphere   = gen_world_atmosphere(worldSize)
-      atmosphereString += get_table_entry(WORLD_ATMOSPHERE_TABLE_HEADER, WORLD_ATMOSPHERE_TABLE, worldAtmosphere) + separatorString
-      if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
-        worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, atmosphereString)
-      if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
-        worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
-        break
-      elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
-        break
-
-    printString += atmosphereString + newLine
+    worldGenOption, atmosphereString, worldAtmosphere = do_interactive_gen_loop(worldGenOption, handle_world_atmos_gen, [worldSize])
+    printString += atmosphereString + NEW_LINE
 
     # Temperature
-    worldTemperature  = 0
-    temperatureString = ""
-    while True:
-      temperatureString  = "World Temperature Info\n" + separatorString
-      worldTemperature   = gen_world_temperature(worldAtmosphere)
-      temperatureString += get_table_entry(WORLD_TEMPERATURE_TABLE_HEADER, WORLD_TEMPERATURE_TABLE, worldTemperature)
-      if worldAtmosphere in (0,1):
-        temperatureString += "Notes: Temperature swings from roasting during the day to frozen at night.\n" + separatorString
-      else:
-        temperatureString += separatorString
-      if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
-        worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, temperatureString)
-      if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
-        worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
-        break
-      elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
-        break
-
-    printString += temperatureString + newLine
+    worldGenOption, temperatureString, worldTemperature = do_interactive_gen_loop(worldGenOption, handle_world_temp_gen, [worldAtmosphere])
+    printString += temperatureString + NEW_LINE
     
     # Hydrographics
-    worldHydrographics  = 0
-    hydrographicsString = ""
-    while True:
-      hydrographicsString  = "World Hydrographics Info\n" + separatorString
-      worldHydrographics   = gen_world_hydrographics(worldSize, worldAtmosphere, worldTemperature)
-      hydrographicsString += get_table_entry(WORLD_HYDROGRAPHICS_TABLE_HEADER, WORLD_HYDROGRAPHICS_TABLE, worldHydrographics) + separatorString
-      if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
-        worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, hydrographicsString)
-      if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
-        worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
-        break
-      elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
-        break
-
-    printString += hydrographicsString + newLine
+    worldGenOption, hydrographicsString, worldHydrographics = do_interactive_gen_loop(worldGenOption, handle_world_hydro_gen, [worldSize, worldAtmosphere, worldTemperature])
+    printString += hydrographicsString + NEW_LINE
 
     # Population
-    worldPopulation  = 0
-    populationString = ""
-    while True:
-      populationString  = "World Population Info\n" + separatorString
-      worldPopulation   = gen_world_population()
-      populationString += get_table_entry(WORLD_POPULATION_TABLE_HEADER, WORLD_POPULATION_TABLE, worldPopulation) + separatorString
-      if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
-        worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, populationString)
-      if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
-        worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
-        break
-      elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
-        break
-
+    worldGenOption, populationString, worldPopulation = do_interactive_gen_loop(worldGenOption, handle_world_pop_gen, noArgs)
     populationNotZero = worldPopulation > 0
-    printString += populationString + newLine
+    printString += populationString + NEW_LINE
     
     # Government
-    worldGovernment  = 0
-    governmentString = ""
-    while True:
-      governmentString  = "World Government Info\n" + separatorString
-      worldGovernment   = gen_world_government(worldPopulation) if populationNotZero else 0
-      governmentString += get_table_entry(WORLD_GOVERNMENT_TABLE_HEADER, WORLD_GOVERNMENT_TABLE, worldGovernment) + separatorString
-      if populationNotZero:
-        if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
-          worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, governmentString)
-        if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
-          worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
-          break
-        elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
-          break
-      else:
-        break
-
-    printString += governmentString + newLine
+    govArgs = [populationNotZero, worldPopulation]
+    if populationNotZero:
+      worldGenOption, governmentString, worldGovernment = do_interactive_gen_loop(worldGenOption, handle_world_gov_gen, govArgs)
+    else:
+      governmentString, worldGovernment = handle_world_gov_gen(govArgs)
+    printString += governmentString + NEW_LINE
 
     # Factions
-    worldFactions = []
-    factionString = ""
-    while True:
-      factionString     = "World Factions Info\n" + separatorString
-      worldFactions     = gen_world_factions(worldGovernment) if populationNotZero else []
-      factionListLength = len(worldFactions)
-      if factionListLength > 0:
-        fIndex = 0
-        while fIndex < factionListLength:
-          factionString += newLine if fIndex > 0 else ""
-          factionString += "Name: Faction" + str(fIndex + 1)  + newLine
-          factionString += get_table_entry(WORLD_FACTIONS_TABLE_HEADER, WORLD_FACTIONS_TABLE, worldFactions[fIndex])
-          fIndex += 1
-      else:
-        factionString += "None\n"
-      factionString += separatorString
-      if populationNotZero:
-        if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
-          worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, factionString)
-        if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
-          worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
-          break
-        elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
-          break
-      else:
-        break
-
-    printString += factionString + newLine
+    facLawArgs = [populationNotZero, worldGovernment]
+    if populationNotZero:
+      worldGenOption, factionString, worldFactions = do_interactive_gen_loop(worldGenOption, handle_world_factions_gen, facLawArgs)
+    else:
+      factionString, worldFactions = handle_world_factions_gen(facLawArgs)
+    printString += factionString + NEW_LINE
     
     # Law
-    worldLawLevel = 0
-    lawString     = ""
-    while True:
-      lawString     = "World Illegal Possessions Info\n" + separatorString
-      worldLawLevel = gen_world_law_level(worldGovernment) if populationNotZero else 0
-      lawString    += "Law Level: " + str(worldLawLevel) + newLine
-      lawString    += get_table_entry(WORLD_LAW_TABLE_HEADER, WORLD_LAW_TABLE, worldLawLevel) + separatorString
-      if populationNotZero:
-        if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
-          worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, lawString)
-        if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
-          worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
-          break
-        elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
-          break
-      else:
-        break
-
-    printString += lawString + newLine
+    if populationNotZero:
+      worldGenOption, lawString, worldLawLevel = do_interactive_gen_loop(worldGenOption, handle_world_law_gen, facLawArgs)
+    else:
+      lawString, worldLawLevel = handle_world_law_gen(facLawArgs)
+    printString += lawString + NEW_LINE
 
     # Culture
-    worldCulture  = 0
-    cultureString = ""
-    while True:
-      cultureString  = "World Cultural Differences Info\n" + separatorString
-      worldCulture   = gen_world_cultural_differences() if populationNotZero else 0
-      cultureString += get_table_entry(WORLD_CULTURE_TABLE_HEADER, WORLD_CULTURE_TABLE, worldCulture) + separatorString
-      if populationNotZero:
-        if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
-          worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, cultureString)
-        if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
-          worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
-          break
-        elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
-          break
-      else:
-        break
-
-    printString += cultureString + newLine
+    culStarArgs = [populationNotZero]
+    if populationNotZero:
+      worldGenOption, cultureString, worldCulture = do_interactive_gen_loop(worldGenOption, handle_world_culture_gen, culStarArgs)
+    else:
+      cultureString, worldCulture = handle_world_culture_gen(culStarArgs)
+    printString += cultureString + NEW_LINE
 
     # Starport
-    worldStarport  = 0
-    starportString = ""
-    while True:
-      starportString     = "World Starport Info\n" + separatorString
-      worldStarport      = gen_world_star_port() if populationNotZero else 0
-      worldStarportTable = gen_world_star_port_table(worldStarport)
-      starportString    += get_table_entry(WORLD_STAR_PORT_TABLE_HEADER, worldStarportTable, worldStarport) + separatorString
-      if populationNotZero:
-        if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
-          worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, starportString)
-        if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
-          worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
-          break
-        elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
-          break
-      else:
-        break
-
-    printString += starportString + newLine
+    if populationNotZero:
+      worldGenOption, starportString, worldStarport = do_interactive_gen_loop(worldGenOption, handle_world_starport_gen, culStarArgs)
+    else:
+      starportString, worldStarport = handle_world_starport_gen(culStarArgs)
+    printString += starportString + NEW_LINE
 
     # Tech
-    worldTechLevel = 0
-    techString = ""
-    while True:
-      techString     = "World Technology Info\n" + separatorString
-      worldTechLevel = gen_world_tech_level(worldStarport, worldSize, worldAtmosphere, worldHydrographics, worldPopulation, worldGovernment) if populationNotZero else 0
-      techString    += "Tech Level: " + str(worldTechLevel) + newLine + separatorString
-      if populationNotZero:
-        if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
-          worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, techString)
-        if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
-          worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
-          break
-        elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
-          break
-      else:
-        break
-
-    printString += techString + newLine
+    techArgs = [populationNotZero, worldStarport, worldSize, worldAtmosphere, worldHydrographics, worldPopulation, worldGovernment]
+    if populationNotZero:
+      worldGenOption, techString, worldTechLevel = do_interactive_gen_loop(worldGenOption, handle_world_tech_gen, techArgs)
+    else:
+      techString, worldTechLevel = handle_world_tech_gen(techArgs)
+    printString += techString + NEW_LINE
 
     # Trade Codes
-    tradeString         = "World Trade Code Info\n" + separatorString
-    worldTradeCodes     = gen_world_trade_codes(worldSize, worldAtmosphere, worldHydrographics, worldPopulation, worldGovernment, worldLawLevel, worldTechLevel)
-    tradeCodeListLength = len(worldTradeCodes)
-    if tradeCodeListLength > 0:
-      tIndex = 0
-      while tIndex < tradeCodeListLength:
-        tradeString += get_table_entry(WORLD_TRADE_TABLE_HEADER, WORLD_TRADE_TABLE, worldTradeCodes[tIndex]) + (newLine if not tIndex == tradeCodeListLength - 1 else "")
-        tIndex += 1
-    else:
-      tradeString += "None\n"
-    tradeString += separatorString
-
-    printString += tradeString + newLine
+    tradeArgs = [worldSize, worldAtmosphere, worldHydrographics, worldPopulation, worldGovernment, worldLawLevel, worldTechLevel]
+    tradeString, worldTradeCodes = handle_world_trade_gen(tradeArgs)
+    printString += tradeString + NEW_LINE
 
     clear_screen()
     print(printString)
+
   except KeyboardInterrupt:
     clear_screen()
     print("Failed to generate world\n")
