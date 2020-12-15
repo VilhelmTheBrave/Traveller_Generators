@@ -43,6 +43,12 @@ def print_option_list(optionList):
   for option in optionList:
     print(str(option.value) + " = " + option.name)
 
+def get_option_values(optionList):
+  valueList = []
+  for option in optionList:
+    valueList.append(option.value)
+  return valueList
+
 def save_output_dialog(scriptDir, outputData, outputTypeName):
   try:
     if len(outputData) > 0:
@@ -69,3 +75,14 @@ def save_output_dialog(scriptDir, outputData, outputTypeName):
 
 def get_cur_dir_path(fileSelfRef):
   return path.dirname(path.realpath(fileSelfRef))
+
+def user_input_dialog(genOptions, extraDisplayString):
+  currentOption = 0
+  valid_option_values = get_option_values(genOptions)
+  while not currentOption in valid_option_values:
+    clear_screen()
+    print(extraDisplayString)
+    print_option_list(genOptions)
+    currentOptionInput = input ("\nChoose a valid option: ")
+    currentOption = int(currentOptionInput) if currentOptionInput.isdigit() else 0
+  return currentOption

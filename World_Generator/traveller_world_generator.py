@@ -501,18 +501,7 @@ class WORLD_GEN_OPTIONS(Enum):
   Continue = 2
   Quit     = 3
 
-def handle_world_gen_dialog(worldGenOptions, propertyString):
-  currentOption = 0
-  while not currentOption in (WORLD_GEN_OPTIONS.ReRoll.value, WORLD_GEN_OPTIONS.Continue.value, WORLD_GEN_OPTIONS.Quit.value):
-    clear_screen()
-    print(propertyString)
-    print_option_list(WORLD_GEN_OPTIONS)
-    currentOptionInput = input ("\nChoose a valid option: ")
-    currentOption = int(currentOptionInput) if currentOptionInput.isdigit() else 0
-  worldGenOptions = currentOption
-  return worldGenOptions
-
-def generate_world(worldGenOptions):
+def generate_world(worldGenOption):
   try:
     separatorString  = "-----------------------------------\n"
     newLine = "\n"
@@ -524,12 +513,12 @@ def generate_world(worldGenOptions):
       sizeString  = "World Size Info\n" + separatorString
       worldSize   = gen_world_size()
       sizeString += get_table_entry(WORLD_SIZE_TABLE_HEADER, WORLD_SIZE_TABLE, worldSize) + separatorString
-      if worldGenOptions == WORLD_GEN_OPTIONS.ReRoll.value:
-        worldGenOptions = handle_world_gen_dialog(worldGenOptions, sizeString)
-      if worldGenOptions == WORLD_GEN_OPTIONS.Continue.value:
-        worldGenOptions = WORLD_GEN_OPTIONS.ReRoll.value
+      if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
+        worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, sizeString)
+      if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
+        worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
         break
-      elif worldGenOptions == WORLD_GEN_OPTIONS.Quit.value:
+      elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
         break
 
     printString = sizeString + newLine
@@ -541,12 +530,12 @@ def generate_world(worldGenOptions):
       atmosphereString  = "World Atmosphere Info\n" + separatorString
       worldAtmosphere   = gen_world_atmosphere(worldSize)
       atmosphereString += get_table_entry(WORLD_ATMOSPHERE_TABLE_HEADER, WORLD_ATMOSPHERE_TABLE, worldAtmosphere) + separatorString
-      if worldGenOptions == WORLD_GEN_OPTIONS.ReRoll.value:
-        worldGenOptions = handle_world_gen_dialog(worldGenOptions, atmosphereString)
-      if worldGenOptions == WORLD_GEN_OPTIONS.Continue.value:
-        worldGenOptions = WORLD_GEN_OPTIONS.ReRoll.value
+      if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
+        worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, atmosphereString)
+      if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
+        worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
         break
-      elif worldGenOptions == WORLD_GEN_OPTIONS.Quit.value:
+      elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
         break
 
     printString += atmosphereString + newLine
@@ -562,12 +551,12 @@ def generate_world(worldGenOptions):
         temperatureString += "Notes: Temperature swings from roasting during the day to frozen at night.\n" + separatorString
       else:
         temperatureString += separatorString
-      if worldGenOptions == WORLD_GEN_OPTIONS.ReRoll.value:
-        worldGenOptions = handle_world_gen_dialog(worldGenOptions, temperatureString)
-      if worldGenOptions == WORLD_GEN_OPTIONS.Continue.value:
-        worldGenOptions = WORLD_GEN_OPTIONS.ReRoll.value
+      if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
+        worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, temperatureString)
+      if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
+        worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
         break
-      elif worldGenOptions == WORLD_GEN_OPTIONS.Quit.value:
+      elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
         break
 
     printString += temperatureString + newLine
@@ -579,12 +568,12 @@ def generate_world(worldGenOptions):
       hydrographicsString  = "World Hydrographics Info\n" + separatorString
       worldHydrographics   = gen_world_hydrographics(worldSize, worldAtmosphere, worldTemperature)
       hydrographicsString += get_table_entry(WORLD_HYDROGRAPHICS_TABLE_HEADER, WORLD_HYDROGRAPHICS_TABLE, worldHydrographics) + separatorString
-      if worldGenOptions == WORLD_GEN_OPTIONS.ReRoll.value:
-        worldGenOptions = handle_world_gen_dialog(worldGenOptions, hydrographicsString)
-      if worldGenOptions == WORLD_GEN_OPTIONS.Continue.value:
-        worldGenOptions = WORLD_GEN_OPTIONS.ReRoll.value
+      if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
+        worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, hydrographicsString)
+      if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
+        worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
         break
-      elif worldGenOptions == WORLD_GEN_OPTIONS.Quit.value:
+      elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
         break
 
     printString += hydrographicsString + newLine
@@ -596,12 +585,12 @@ def generate_world(worldGenOptions):
       populationString  = "World Population Info\n" + separatorString
       worldPopulation   = gen_world_population()
       populationString += get_table_entry(WORLD_POPULATION_TABLE_HEADER, WORLD_POPULATION_TABLE, worldPopulation) + separatorString
-      if worldGenOptions == WORLD_GEN_OPTIONS.ReRoll.value:
-        worldGenOptions = handle_world_gen_dialog(worldGenOptions, populationString)
-      if worldGenOptions == WORLD_GEN_OPTIONS.Continue.value:
-        worldGenOptions = WORLD_GEN_OPTIONS.ReRoll.value
+      if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
+        worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, populationString)
+      if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
+        worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
         break
-      elif worldGenOptions == WORLD_GEN_OPTIONS.Quit.value:
+      elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
         break
 
     populationNotZero = worldPopulation > 0
@@ -615,12 +604,12 @@ def generate_world(worldGenOptions):
       worldGovernment   = gen_world_government(worldPopulation) if populationNotZero else 0
       governmentString += get_table_entry(WORLD_GOVERNMENT_TABLE_HEADER, WORLD_GOVERNMENT_TABLE, worldGovernment) + separatorString
       if populationNotZero:
-        if worldGenOptions == WORLD_GEN_OPTIONS.ReRoll.value:
-          worldGenOptions = handle_world_gen_dialog(worldGenOptions, governmentString)
-        if worldGenOptions == WORLD_GEN_OPTIONS.Continue.value:
-          worldGenOptions = WORLD_GEN_OPTIONS.ReRoll.value
+        if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
+          worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, governmentString)
+        if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
+          worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
           break
-        elif worldGenOptions == WORLD_GEN_OPTIONS.Quit.value:
+        elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
           break
       else:
         break
@@ -645,12 +634,12 @@ def generate_world(worldGenOptions):
         factionString += "None\n"
       factionString += separatorString
       if populationNotZero:
-        if worldGenOptions == WORLD_GEN_OPTIONS.ReRoll.value:
-          worldGenOptions = handle_world_gen_dialog(worldGenOptions, factionString)
-        if worldGenOptions == WORLD_GEN_OPTIONS.Continue.value:
-          worldGenOptions = WORLD_GEN_OPTIONS.ReRoll.value
+        if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
+          worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, factionString)
+        if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
+          worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
           break
-        elif worldGenOptions == WORLD_GEN_OPTIONS.Quit.value:
+        elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
           break
       else:
         break
@@ -666,12 +655,12 @@ def generate_world(worldGenOptions):
       lawString    += "Law Level: " + str(worldLawLevel) + newLine
       lawString    += get_table_entry(WORLD_LAW_TABLE_HEADER, WORLD_LAW_TABLE, worldLawLevel) + separatorString
       if populationNotZero:
-        if worldGenOptions == WORLD_GEN_OPTIONS.ReRoll.value:
-          worldGenOptions = handle_world_gen_dialog(worldGenOptions, lawString)
-        if worldGenOptions == WORLD_GEN_OPTIONS.Continue.value:
-          worldGenOptions = WORLD_GEN_OPTIONS.ReRoll.value
+        if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
+          worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, lawString)
+        if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
+          worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
           break
-        elif worldGenOptions == WORLD_GEN_OPTIONS.Quit.value:
+        elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
           break
       else:
         break
@@ -686,12 +675,12 @@ def generate_world(worldGenOptions):
       worldCulture   = gen_world_cultural_differences() if populationNotZero else 0
       cultureString += get_table_entry(WORLD_CULTURE_TABLE_HEADER, WORLD_CULTURE_TABLE, worldCulture) + separatorString
       if populationNotZero:
-        if worldGenOptions == WORLD_GEN_OPTIONS.ReRoll.value:
-          worldGenOptions = handle_world_gen_dialog(worldGenOptions, cultureString)
-        if worldGenOptions == WORLD_GEN_OPTIONS.Continue.value:
-          worldGenOptions = WORLD_GEN_OPTIONS.ReRoll.value
+        if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
+          worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, cultureString)
+        if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
+          worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
           break
-        elif worldGenOptions == WORLD_GEN_OPTIONS.Quit.value:
+        elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
           break
       else:
         break
@@ -707,12 +696,12 @@ def generate_world(worldGenOptions):
       worldStarportTable = gen_world_star_port_table(worldStarport)
       starportString    += get_table_entry(WORLD_STAR_PORT_TABLE_HEADER, worldStarportTable, worldStarport) + separatorString
       if populationNotZero:
-        if worldGenOptions == WORLD_GEN_OPTIONS.ReRoll.value:
-          worldGenOptions = handle_world_gen_dialog(worldGenOptions, starportString)
-        if worldGenOptions == WORLD_GEN_OPTIONS.Continue.value:
-          worldGenOptions = WORLD_GEN_OPTIONS.ReRoll.value
+        if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
+          worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, starportString)
+        if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
+          worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
           break
-        elif worldGenOptions == WORLD_GEN_OPTIONS.Quit.value:
+        elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
           break
       else:
         break
@@ -727,12 +716,12 @@ def generate_world(worldGenOptions):
       worldTechLevel = gen_world_tech_level(worldStarport, worldSize, worldAtmosphere, worldHydrographics, worldPopulation, worldGovernment) if populationNotZero else 0
       techString    += "Tech Level: " + str(worldTechLevel) + newLine + separatorString
       if populationNotZero:
-        if worldGenOptions == WORLD_GEN_OPTIONS.ReRoll.value:
-          worldGenOptions = handle_world_gen_dialog(worldGenOptions, techString)
-        if worldGenOptions == WORLD_GEN_OPTIONS.Continue.value:
-          worldGenOptions = WORLD_GEN_OPTIONS.ReRoll.value
+        if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
+          worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, techString)
+        if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
+          worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
           break
-        elif worldGenOptions == WORLD_GEN_OPTIONS.Quit.value:
+        elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
           break
       else:
         break
@@ -778,7 +767,7 @@ def main():
     clear_screen()
     currentOption = 0
     currentWorldInfo = ""
-    while not currentOption == Generator_Options.Exit.value:
+    while True:
       print_option_list(Generator_Options)
       currentOptionInput = input ("\nChoose a valid option: ")
       currentOption = int(currentOptionInput) if currentOptionInput.isdigit() else 0
@@ -790,6 +779,7 @@ def main():
         save_output_dialog(currentDirectory, currentWorldInfo, "World")
       elif currentOption == Generator_Options.Exit.value:
         clear_screen()
+        break
       else:
         clear_screen()
         print(currentWorldInfo) if len(currentWorldInfo) > 0 else 0
