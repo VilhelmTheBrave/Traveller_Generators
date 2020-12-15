@@ -4,6 +4,12 @@ from random import randint
 from subprocess import call
 from platform import system
 from os import path,mkdir
+from enum import Enum
+
+class INTERACTIVE_GEN_OPTIONS(Enum):
+  ReRoll   = 1
+  Continue = 2
+  Quit     = 3
 
 def roll_dice(numRolls=1,diceMin=1,diceMax=6):
   curRollCount = 0
@@ -86,3 +92,16 @@ def user_input_dialog(genOptions, extraDisplayString):
     currentOptionInput = input ("\nChoose a valid option: ")
     currentOption = int(currentOptionInput) if currentOptionInput.isdigit() else 0
   return currentOption
+
+def do_interactive_gen_loop(interactiveGenOption, loopFunc, funcArgs):
+  while True:
+    retString, retValue = loopFunc(funcArgs)
+    if interactiveGenOption == INTERACTIVE_GEN_OPTIONS.ReRoll.value:
+      interactiveGenOption = user_input_dialog(INTERACTIVE_GEN_OPTIONS, retString)
+    if interactiveGenOption == INTERACTIVE_GEN_OPTIONS.Continue.value:
+      interactiveGenOption = INTERACTIVE_GEN_OPTIONS.ReRoll.value
+      break
+    elif interactiveGenOption == INTERACTIVE_GEN_OPTIONS.Quit.value:
+      break
+  return interactiveGenOption, retString, retValue
+  

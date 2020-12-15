@@ -8,11 +8,6 @@ from support_functions import *
 
 # Global Vars
 #--------------------------------------------------#
-class WORLD_GEN_OPTIONS(Enum):
-  ReRoll   = 1
-  Continue = 2
-  Quit     = 3
-
 SEPARATOR_STRING  = "-----------------------------------\n"
 NEW_LINE = "\n"
 #--------------------------------------------------#
@@ -505,21 +500,6 @@ def gen_world_trade_codes(sizeNum, atmosNum, hydroNum, popNum, govNum, lawNum, t
   return tradeCodes
 #--------------------------------------------------#
 
-# Loop to handle interactive world gen
-#--------------------------------------------------#
-def do_interactive_gen_loop(worldGenOption, loopFunc, funcArgs):
-  while True:
-    retString, retValue = loopFunc(funcArgs)
-    if worldGenOption == WORLD_GEN_OPTIONS.ReRoll.value:
-      worldGenOption = user_input_dialog(WORLD_GEN_OPTIONS, retString)
-    if worldGenOption == WORLD_GEN_OPTIONS.Continue.value:
-      worldGenOption = WORLD_GEN_OPTIONS.ReRoll.value
-      break
-    elif worldGenOption == WORLD_GEN_OPTIONS.Quit.value:
-      break
-  return worldGenOption, retString, retValue
-#--------------------------------------------------#
-
 # World size generation
 #--------------------------------------------------#
 def handle_world_size_gen(funcArgs):
@@ -786,9 +766,9 @@ def main():
       currentOptionInput = input ("\nChoose a valid option: ")
       currentOption = int(currentOptionInput) if currentOptionInput.isdigit() else 0
       if currentOption == Generator_Options.Generate_Random_World.value:
-        currentWorldInfo = generate_world(WORLD_GEN_OPTIONS.Quit.value)
+        currentWorldInfo = generate_world(INTERACTIVE_GEN_OPTIONS.Quit.value)
       elif currentOption == Generator_Options.Interactive_World_Generation.value:
-        currentWorldInfo = generate_world(WORLD_GEN_OPTIONS.ReRoll.value)
+        currentWorldInfo = generate_world(INTERACTIVE_GEN_OPTIONS.ReRoll.value)
       elif currentOption == Generator_Options.Save_Current_World.value:
         save_output_dialog(currentDirectory, currentWorldInfo, "World")
       elif currentOption == Generator_Options.Exit.value:
