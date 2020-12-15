@@ -1,50 +1,10 @@
 #!/usr/bin/env python3
 
-from random import randint
-from subprocess import call
-from platform import system
 from enum import Enum
-from os import path,mkdir
+from sys import path
 
-# Helper Functions
-#--------------------------------------------------#
-def roll_dice(numRolls=1,diceMin=1,diceMax=6):
-  curRollCount = 0
-  result = 0
-  while curRollCount < numRolls:
-    result += randint(diceMin, diceMax)
-    curRollCount += 1
-  return result
-
-def get_table_entry(header, table, index):
-  selectedEntry = table[index]
-  headerLength = len(header)
-  entryString = ""
-  i = 0
-  while i < headerLength:
-    entryString += header[i] + ": " + table[index][i] + "\n"
-    i += 1
-  return entryString
-
-def convert_slist_to_string(listOfStrings):
-  stringListLen = len(listOfStrings)
-  retString = ""
-  for entry in listOfStrings:
-    retString += ", " if len(retString) > 0 and len(entry) > 0 else ""
-    retString += entry
-  return retString
-
-def clear_screen():
-  sysName = system()
-  if sysName == 'Windows':
-    call("cls", shell=True)
-  elif sysName == 'Linux':
-    call("clear", shell=True)
-
-def print_option_list(optionList):
-  for option in optionList:
-    print(str(option.value) + " = " + option.name)
-#--------------------------------------------------#
+path.append("..")
+from support_functions import *
 
 # World Size
 #--------------------------------------------------#
@@ -378,7 +338,6 @@ def gen_world_star_port_table(worldStarportNum):
       pirateString = "Pirate" if roll_dice(2) >= 12 else ""
       scoutString  = "Scout" if roll_dice(2) >= 7 else ""
       baseString   = convert_slist_to_string((pirateString, scoutString))
-      baseString   = "None" if len(baseString) == 0 else baseString
       starPortTable.append(("D", "Poor", str(roll_dice() * 10), "Unrefined", "Limited Repair", baseString))
     elif i in (7,8):
       pirateString    = "Pirate" if roll_dice(2) >= 10 else ""
@@ -387,7 +346,6 @@ def gen_world_star_port_table(worldStarportNum):
       researchString  = "Research" if roll_dice(2) >= 10 else ""
       consulateString = "Imperial Consulate" if roll_dice(2) >= 10 else ""
       baseString      = convert_slist_to_string((pirateString, scoutString, tasString, researchString, consulateString))
-      baseString      = "None" if len(baseString) == 0 else baseString
       starPortTable.append(("C", "Routine", str(roll_dice() * 100), "Unrefined", "Shipyard (small craft) Repair", baseString))
     elif i in (9,10):
       pirateString    = "Pirate" if roll_dice(2) >= 12 else ""
@@ -397,7 +355,6 @@ def gen_world_star_port_table(worldStarportNum):
       consulateString = "Imperial Consulate" if roll_dice(2) >= 8 else ""
       navalString     = "Naval" if roll_dice(2) >= 8 else ""
       baseString      = convert_slist_to_string((pirateString, scoutString, tasString, researchString, consulateString, navalString))
-      baseString      = "None" if len(baseString) == 0 else baseString
       starPortTable.append(("B", "Good", str(roll_dice() * 500), "Refined", "Shipyard (spacecraft) Repair", baseString))
     else:
       scoutString     = "Scout" if roll_dice(2) >= 10 else ""
@@ -406,7 +363,6 @@ def gen_world_star_port_table(worldStarportNum):
       consulateString = "Imperial Consulate" if roll_dice(2) >= 6 else ""
       navalString     = "Naval" if roll_dice(2) >= 8 else ""
       baseString      = convert_slist_to_string((scoutString, tasString, researchString, consulateString, navalString))
-      baseString      = "None" if len(baseString) == 0 else baseString
       starPortTable.append(("A", "Excellent", str(roll_dice() * 1000), "Refined", "Shipyard (all) Repair", baseString))
     i += 1
   return starPortTable
@@ -536,33 +492,6 @@ def gen_world_trade_codes(sizeNum, atmosNum, hydroNum, popNum, govNum, lawNum, t
   if hydroNum == 10:
     tradeCodes.append(17)
   return tradeCodes
-#--------------------------------------------------#
-
-# Save Current World
-#--------------------------------------------------#
-def save_world_dialog(worldInfo):
-  try:
-    if len(worldInfo) > 0:
-      savedWorldsDir = path.join(path.dirname(path.realpath(__file__)), "Saved_Worlds")
-      clear_screen()
-      saveName = input ("Enter a world name to save: ")
-      if len(saveName) > 0:
-        if not path.exists(savedWorldsDir):
-          mkdir(savedWorldsDir)
-        saveTextFileLocation = path.join(savedWorldsDir, saveName + ".txt")
-        with open(saveTextFileLocation, "w") as outTextFile:
-          outTextFile.write(worldInfo)
-        clear_screen()
-        print(worldInfo + "World Saved\n")
-      else:
-        clear_screen()
-        print(worldInfo + "World name empty, skipping save\n")
-    else:
-      clear_screen()
-      print("Generate a world first\n")
-  except KeyboardInterrupt:
-    clear_screen()
-    print(worldInfo + "Failed to save world\n")
 #--------------------------------------------------#
 
 # Generate a new world
@@ -845,6 +774,7 @@ def main():
     Exit                         = 4
 
   try:
+    currentDirectory = get_cur_dir_path(__file__)
     clear_screen()
     currentOption = 0
     currentWorldInfo = ""
@@ -857,7 +787,7 @@ def main():
       elif currentOption == Generator_Options.Interactive_World_Generation.value:
         currentWorldInfo = generate_world(WORLD_GEN_OPTIONS.ReRoll.value)
       elif currentOption == Generator_Options.Save_Current_World.value:
-          save_world_dialog(currentWorldInfo)
+        save_output_dialog(currentDirectory, currentWorldInfo, "World")
       elif currentOption == Generator_Options.Exit.value:
         clear_screen()
       else:
