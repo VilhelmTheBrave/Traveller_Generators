@@ -6,6 +6,12 @@ from platform import system
 from os import path,mkdir
 from enum import Enum
 
+class GENERATOR_OPTIONS(Enum):
+  Generate_Random        = 1
+  Interactive_Generation = 2
+  Save_Current           = 3
+  Exit                   = 4
+
 class INTERACTIVE_GEN_OPTIONS(Enum):
   ReRoll   = 1
   Continue = 2
@@ -133,4 +139,32 @@ def do_interactive_gen_loop(interactiveGenOption, loopFunc, funcArgs):
     elif interactiveGenOption == INTERACTIVE_GEN_OPTIONS.Quit.value:
       break
   return interactiveGenOption, retString, retValue
+#--------------------------------------------------#
+
+# Main loop for asset generation
+#--------------------------------------------------#
+def do_main_loop(scriptSelfRef, primaryGenFunc, assetName):
+  try:
+    currentDirectory = get_cur_dir_path(scriptSelfRef)
+    clear_screen()
+    currentOption = 0
+    currentAssetInfo = ""
+    while True:
+      print_option_list(GENERATOR_OPTIONS)
+      currentOptionInput = input ("\nChoose a " + assetName + " generation option: ")
+      currentOption = int(currentOptionInput) if currentOptionInput.isdigit() else 0
+      if currentOption == GENERATOR_OPTIONS.Generate_Random.value:
+        currentAssetInfo = primaryGenFunc(INTERACTIVE_GEN_OPTIONS.Quit.value)
+      elif currentOption == GENERATOR_OPTIONS.Interactive_Generation.value:
+        currentAssetInfo = primaryGenFunc(INTERACTIVE_GEN_OPTIONS.ReRoll.value)
+      elif currentOption == GENERATOR_OPTIONS.Save_Current.value:
+        save_output_dialog(currentDirectory, currentAssetInfo, assetName)
+      elif currentOption == GENERATOR_OPTIONS.Exit.value:
+        clear_screen()
+        break
+      else:
+        clear_screen()
+        print(currentAssetInfo) if len(currentAssetInfo) > 0 else 0
+  except KeyboardInterrupt:
+    clear_screen()
 #--------------------------------------------------#

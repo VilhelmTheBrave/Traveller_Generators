@@ -749,36 +749,8 @@ def generate_world(worldGenOption):
 # Main
 #--------------------------------------------------#
 def main():
-  class Generator_Options(Enum):
-    Generate_Random_World        = 1
-    Interactive_World_Generation = 2
-    Save_Current_World           = 3
-    Exit                         = 4
-
-  try:
-    currentDirectory = get_cur_dir_path(__file__)
-    clear_screen()
-    currentOption = 0
-    currentWorldInfo = ""
-    while True:
-      print_option_list(Generator_Options)
-      currentOptionInput = input ("\nChoose a valid option: ")
-      currentOption = int(currentOptionInput) if currentOptionInput.isdigit() else 0
-      if currentOption == Generator_Options.Generate_Random_World.value:
-        currentWorldInfo = generate_world(INTERACTIVE_GEN_OPTIONS.Quit.value)
-      elif currentOption == Generator_Options.Interactive_World_Generation.value:
-        currentWorldInfo = generate_world(INTERACTIVE_GEN_OPTIONS.ReRoll.value)
-      elif currentOption == Generator_Options.Save_Current_World.value:
-        save_output_dialog(currentDirectory, currentWorldInfo, "World")
-      elif currentOption == Generator_Options.Exit.value:
-        clear_screen()
-        break
-      else:
-        clear_screen()
-        print(currentWorldInfo) if len(currentWorldInfo) > 0 else 0
-  except KeyboardInterrupt:
-    clear_screen()
-#--------------------------------------------------#
+  do_main_loop(__file__, generate_world, "World")
 
 if __name__ == "__main__":
   main()
+#--------------------------------------------------#
