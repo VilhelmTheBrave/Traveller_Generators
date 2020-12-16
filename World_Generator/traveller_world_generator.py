@@ -6,12 +6,6 @@ from sys import path
 path.append("..")
 from support_functions import *
 
-# Global Vars
-#--------------------------------------------------#
-SEPARATOR_STRING  = "-----------------------------------\n"
-NEW_LINE = "\n"
-#--------------------------------------------------#
-
 # World Size
 #--------------------------------------------------#
 WORLD_SIZE_TABLE_HEADER = ("World Size (km)", "Surface Gravity (gs)")

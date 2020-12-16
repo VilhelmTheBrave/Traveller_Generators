@@ -6,6 +6,11 @@ from platform import system
 from os import path,mkdir
 from enum import Enum
 
+# Global vars
+#--------------------------------------------------#
+SEPARATOR_STRING  = "-----------------------------------\n"
+NEW_LINE = "\n"
+
 class GENERATOR_OPTIONS(Enum):
   Generate_Random        = 1
   Interactive_Generation = 2
@@ -16,6 +21,7 @@ class INTERACTIVE_GEN_OPTIONS(Enum):
   ReRoll   = 1
   Continue = 2
   Quit     = 3
+#--------------------------------------------------#
 
 # Roll a dice, defaults to d6
 #--------------------------------------------------#
