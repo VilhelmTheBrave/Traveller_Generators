@@ -67,6 +67,8 @@ def clear_screen():
     call("cls", shell=True)
   elif sysName == 'Linux':
     call("clear", shell=True)
+  else:
+    0 # Do Nothing
 #--------------------------------------------------#
 
 # Prints the list of script options
@@ -83,6 +85,24 @@ def get_option_values(optionList):
   for option in optionList:
     valueList.append(option.value)
   return valueList
+#--------------------------------------------------#
+
+# Gets an option using its value
+#--------------------------------------------------#
+def get_option_by_value(optionList, optionValue):
+  retOption = 0
+  for option in optionList:
+    retOption = option if option.value == optionValue else retOption
+  return retOption
+#--------------------------------------------------#
+
+# Gets an option using its name
+#--------------------------------------------------#
+def get_option_by_name(optionList, optionName):
+  retOption = 0
+  for option in optionList:
+    retOption = option if option.name == optionName else retOption
+  return retOption
 #--------------------------------------------------#
 
 # Prompts the user to save an asset
@@ -129,7 +149,8 @@ def user_input_dialog(genOptions, extraDisplayString):
     print_option_list(genOptions)
     currentOptionInput = input ("\nChoose a valid option: ")
     currentOption = int(currentOptionInput) if currentOptionInput.isdigit() else 0
-  return currentOption
+  selectedOption = get_option_by_value(genOptions, currentOption)
+  return selectedOption
 #--------------------------------------------------#
 
 # Prompts the user to do interactive generation
@@ -137,12 +158,12 @@ def user_input_dialog(genOptions, extraDisplayString):
 def do_interactive_gen_loop(interactiveGenOption, loopFunc, funcArgs):
   while True:
     retString, retValue = loopFunc(funcArgs)
-    if interactiveGenOption == INTERACTIVE_GEN_OPTIONS.ReRoll.value:
+    if interactiveGenOption == INTERACTIVE_GEN_OPTIONS.ReRoll:
       interactiveGenOption = user_input_dialog(INTERACTIVE_GEN_OPTIONS, retString)
-    if interactiveGenOption == INTERACTIVE_GEN_OPTIONS.Continue.value:
-      interactiveGenOption = INTERACTIVE_GEN_OPTIONS.ReRoll.value
+    if interactiveGenOption == INTERACTIVE_GEN_OPTIONS.Continue:
+      interactiveGenOption = INTERACTIVE_GEN_OPTIONS.ReRoll
       break
-    elif interactiveGenOption == INTERACTIVE_GEN_OPTIONS.Quit.value:
+    elif interactiveGenOption == INTERACTIVE_GEN_OPTIONS.Quit:
       break
   return interactiveGenOption, retString, retValue
 #--------------------------------------------------#
@@ -158,14 +179,14 @@ def do_main_loop(scriptSelfRef, primaryGenFunc, assetName):
     while True:
       print_option_list(GENERATOR_OPTIONS)
       currentOptionInput = input ("\nChoose a " + assetName + " generation option: ")
-      currentOption = int(currentOptionInput) if currentOptionInput.isdigit() else 0
-      if currentOption == GENERATOR_OPTIONS.Generate_Random.value:
-        currentAssetInfo = primaryGenFunc(INTERACTIVE_GEN_OPTIONS.Quit.value)
-      elif currentOption == GENERATOR_OPTIONS.Interactive_Generation.value:
-        currentAssetInfo = primaryGenFunc(INTERACTIVE_GEN_OPTIONS.ReRoll.value)
-      elif currentOption == GENERATOR_OPTIONS.Save_Current.value:
+      currentOption = get_option_by_value(GENERATOR_OPTIONS, int(currentOptionInput)) if currentOptionInput.isdigit() else 0
+      if currentOption == GENERATOR_OPTIONS.Generate_Random:
+        currentAssetInfo = primaryGenFunc(INTERACTIVE_GEN_OPTIONS.Quit)
+      elif currentOption == GENERATOR_OPTIONS.Interactive_Generation:
+        currentAssetInfo = primaryGenFunc(INTERACTIVE_GEN_OPTIONS.ReRoll)
+      elif currentOption == GENERATOR_OPTIONS.Save_Current:
         save_output_dialog(currentDirectory, currentAssetInfo, assetName)
-      elif currentOption == GENERATOR_OPTIONS.Exit.value:
+      elif currentOption == GENERATOR_OPTIONS.Exit:
         clear_screen()
         break
       else:
