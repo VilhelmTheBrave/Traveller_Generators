@@ -158,79 +158,66 @@ def gen_creature_characteristics_info(creatureCharNum, creatureBehaviorNum, stre
     dexerity  = str(roll_dice() + dexterityMod)
     endurance = str(1 + enduranceMod)
     strength  = 1 + strengthMod
-    damage    = get_creature_damage(strength)
     weight    = "1"
   elif creatureCharNum == 2:
     dexerity  = str(roll_dice() + dexterityMod)
     endurance = str(2 + enduranceMod)
     strength  = 2 + strengthMod
-    damage    = get_creature_damage(strength)
     weight    = "3"
   elif creatureCharNum == 3:
     dexerity  = str(roll_dice(2) + dexterityMod)
     endurance = str(roll_dice() + enduranceMod)
     strength  = roll_dice() + strengthMod
-    damage    = get_creature_damage(strength)
     weight    = "6"
   elif creatureCharNum == 4:
     dexerity  = str(roll_dice(2) + dexterityMod)
     endurance = str(roll_dice() + enduranceMod)
     strength  = roll_dice() + strengthMod
-    damage    = get_creature_damage(strength)
     weight    = "12"
   elif creatureCharNum == 5:
     dexerity  = str(roll_dice(3) + dexterityMod)
     endurance = str(roll_dice(2) + enduranceMod)
     strength  = roll_dice(2) + strengthMod
-    damage    = get_creature_damage(strength)
     weight    = "25"
   elif creatureCharNum == 6:
     dexerity  = str(roll_dice(4) + dexterityMod)
     endurance = str(roll_dice(2) + enduranceMod)
     strength  = roll_dice(2) + strengthMod
-    damage    = get_creature_damage(strength)
     weight    = "50"
   elif creatureCharNum == 7:
     dexerity  = str(roll_dice(3) + dexterityMod)
     endurance = str(roll_dice(3) + enduranceMod)
     strength  = roll_dice(3) + strengthMod
-    damage    = get_creature_damage(strength)
     weight    = "100"
   elif creatureCharNum == 8:
     dexerity  = str(roll_dice(3) + dexterityMod)
     endurance = str(roll_dice(3) + enduranceMod)
     strength  = roll_dice(3) + strengthMod
-    damage    = get_creature_damage(strength)
     weight    = "200"
   elif creatureCharNum == 9:
     dexerity  = str(roll_dice(2) + dexterityMod)
     endurance = str(roll_dice(4) + enduranceMod)
     strength  = roll_dice(4) + strengthMod
-    damage    = get_creature_damage(strength)
     weight    = "400"
   elif creatureCharNum == 10:
     dexerity  = str(roll_dice(2) + dexterityMod)
     endurance = str(roll_dice(4) + enduranceMod)
     strength  = roll_dice(4) + strengthMod
-    damage    = get_creature_damage(strength)
     weight    = "800"
   elif creatureCharNum == 11:
     dexerity  = str(roll_dice(2) + dexterityMod)
     endurance = str(roll_dice(5) + enduranceMod)
     strength  = roll_dice(5) + strengthMod
-    damage    = get_creature_damage(strength)
     weight    = "1600"
   elif creatureCharNum == 12:
     dexerity  = str(roll_dice() + dexterityMod)
     endurance = str(roll_dice(6) + enduranceMod)
     strength  = roll_dice(6) + strengthMod
-    damage    = get_creature_damage(strength)
     weight    = "3200"
   else:
     dexerity  = str(roll_dice() + dexterityMod)
     endurance = str(roll_dice(7) + enduranceMod)
     strength  = roll_dice(7) + strengthMod
-    damage    = get_creature_damage(strength)
     weight    = "5000"
 
   intelligence = str(roll_dice(1, 0, 1))
