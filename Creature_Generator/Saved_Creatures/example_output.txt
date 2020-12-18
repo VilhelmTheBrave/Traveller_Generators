@@ -1,53 +1,53 @@
 Creature Movement Info
 -----------------------------------
-Terrain: Jungle
+Terrain: Desert
 Movement: Fly -6
 -----------------------------------
 
 Creature Type Info
 -----------------------------------
-Type: Carnivore
+Type: Scavenger
 -----------------------------------
 
 Creature Behavior Info
 -----------------------------------
-Behavior: Pouncer
-Description: Pouncers kill by stalking and ambushing their prey.
+Behavior: Intimidator
+Description: Scavengers which establish their claim to food by frightening or intimidating other creatures.
 -----------------------------------
 
 Creature Characteristics Info
 -----------------------------------
-Weight (kg): 12
-Strength: 2
+Weight (kg): 25
+Strength: 3
 Dexterity: 11
-Endurance: 1
-Intelligence: 0
+Endurance: 11
+Intelligence: 1
 Instinct: 12
 -----------------------------------
 
 Creature Weapon Info
 -----------------------------------
-Weapons: Thrasher
-Damage: 1d6+2
+Weapons: Hooves and Teeth
+Damage: 1d6
 -----------------------------------
 
 Creature Armour Info
 -----------------------------------
-Armour Value: 1
+Armour Value: 3
 -----------------------------------
 
 Creature Skills Info
 -----------------------------------
 Survival: 2
-Athletics: 1
-Recon: 2
-Melee: 2
-Stealth: 0
+Athletics: 0
+Recon: 1
+Melee: 3
+Persuade: 1
 -----------------------------------
 
 Creature Pack Info
 -----------------------------------
-Pack Value: 9
+Pack Value: 6
 Number Encountered: 8
 -----------------------------------
 
