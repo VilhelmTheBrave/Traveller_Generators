@@ -6,9 +6,54 @@ from sys import path
 path.append("..")
 from support_functions import *
 
+# Global Enums
+#--------------------------------------------------#
+class TERRAIN_OPTIONS(Enum):
+  Random          = 0
+  Clear           = 1
+  Plain_Prairie   = 2
+  Desert          = 3
+  Hills_Foothills = 4
+  Mountain        = 5
+  Forest          = 6
+  Woods           = 7
+  Jungle          = 8
+  Rainforest      = 9
+  Rough_Broken    = 10
+  Swamp_Marsh     = 11
+  Beach_Shore     = 12
+  Riverbank       = 13
+  Ocean_Shallows  = 14
+  Open_Ocean      = 15
+  Deep_Ocean      = 16
+
+class CREATURE_TYPES(Enum):
+  Scavenger = (2,4,10)
+  Omnivore  = (3,5)
+  Herbivore = (6,7,8)
+  Carnivore = (9,11,12)
+
+class CREATURE_BEHAVIORS(Enum):
+  Carrion_Eater = "Scavengers which wait for all other threats to disperse before beginning."
+  Chaser        = "Animals which kill their prey by attacking and exhausting it after a chase."
+  Eater         = "Eaters will eat anything they encounter, including characters."
+  Filter        = "Herbivores which pass their environment through their bodies are termed filters. Unlike grazers, which move to food, filters move a flow of matter through themselves and filter out the food."
+  Gatherer      = "Gatherers are omnivores that collect and store food."
+  Grazer        = "Grazers move from food source to food source, often in large packs. Their primary form of defence tends to be fleeing danger."
+  Hunter        = "Opportunistic predators that stalk easy prey."
+  Hijacker      = "Scavengers which steal the kills of others through brute force or weight of numbers are hijackers."
+  Intimidator   = "Scavengers which establish their claim to food by frightening or intimidating other creatures."
+  Killer        = "Carnivores that possess a raw killing instinct, attacking in a frenzied manner"
+  Intermittent  = "Herbivores that do not devote their entire time to searching for food."
+  Pouncer       = "Pouncers kill by stalking and ambushing their prey."
+  Reducer       = "Reducers are scavengers that act constantly on all available food, devouring even the remains left by other scavengers."
+  Siren         = "Sirens create a lure to attract prey. Usually, this lure will be specific to the species the siren preys on, but some rare lures are universal."
+  Trapper       = "An animal which allows its prey to enter a trap. Generally, any creature surprised by a trapper is caught in its trap."
+#--------------------------------------------------#
+
 # Creature Movement
 #--------------------------------------------------#
-CREATURE_MOVEMENT_TABLE_HEADER = ["Creature Movement"]
+CREATURE_MOVEMENT_TABLE_HEADER = ["Movement"]
 
 CLEAR_JUNGLE_MOVEMENT_TABLE  = (["Walk"   ], ["Walk"         ], ["Walk"   ], ["Walk"   ], ["Walk +2"], ["Fly -6" ])
 PLAIN_MOVEMENT_TABLE         = (["Walk"   ], ["Walk"         ], ["Walk"   ], ["Walk +2"], ["Walk +4"], ["Fly -6" ])
@@ -28,12 +73,6 @@ def gen_creature_movement():
 
 # Creature Type
 #--------------------------------------------------#
-class CREATURE_TYPES(Enum):
-  Scavenger = (2,4,10)
-  Omnivore  = (3,5)
-  Herbivore = (6,7,8)
-  Carnivore = (9,11,12)
-
 def gen_creature_type():
   creatureTypeRoll = roll_dice(2)
   for creatureTypeEntry in CREATURE_TYPES:
@@ -45,23 +84,6 @@ def gen_creature_type():
 
 # Creature Behavior
 #--------------------------------------------------#
-class CREATURE_BEHAVIORS(Enum):
-  Carrion_Eater = "Scavengers which wait for all other threats to disperse before beginning."
-  Chaser        = "Animals which kill their prey by attacking and exhausting it after a chase."
-  Eater         = "Eaters will eat anything they encounter, including characters."
-  Filter        = "Herbivores which pass their environment through their bodies are termed filters. Unlike grazers, which move to food, filters move a flow of matter through themselves and filter out the food."
-  Gatherer      = "Gatherers are omnivores that collect and store food."
-  Grazer        = "Grazers move from food source to food source, often in large packs. Their primary form of defence tends to be fleeing danger."
-  Hunter        = "Opportunistic predators that stalk easy prey."
-  Hijacker      = "Scavengers which steal the kills of others through brute force or weight of numbers are hijackers."
-  Intimidator   = "Scavengers which establish their claim to food by frightening or intimidating other creatures."
-  Killer        = "Carnivores that possess a raw killing instinct, attacking in a frenzied manner"
-  Intermittent  = "Herbivores that do not devote their entire time to searching for food."
-  Pouncer       = "Pouncers kill by stalking and ambushing their prey."
-  Reducer       = "Reducers are scavengers that act constantly on all available food, devouring even the remains left by other scavengers."
-  Siren         = "Sirens create a lure to attract prey. Usually, this lure will be specific to the species the siren preys on, but some rare lures are universal."
-  Trapper       = "An animal which allows its prey to enter a trap. Generally, any creature surprised by a trapper is caught in its trap."
-
 def gen_creature_behavior(chosenTerrain, creatureType):
   if chosenTerrain in (TERRAIN_OPTIONS.Clear, TERRAIN_OPTIONS.Desert, TERRAIN_OPTIONS.Rough_Broken):
     terrainMod = 3
@@ -119,32 +141,255 @@ def gen_creature_behavior(chosenTerrain, creatureType):
 
 # Creature characteristics
 #--------------------------------------------------#
-CREATURE_CHARACTERISTICS_TABLE_HEADER = ("Weight (kg)", "Strength", "Dexterity", "Endurance", "Intellegence", "Damage")
+CREATURE_CHARACTERISTICS_TABLE_HEADER = ("Weight (kg)", "Strength", "Dexterity", "Endurance", "Intelligence", "Instinct")
 
-def gen_creature_characteristics(chosenTerrain, creatureBehavior):
-  strengthMod  = 0
-  dexterityMod = 0
-  enduranceMod = 0
-  if creatureBehavior in (CREATURE_BEHAVIORS.Chaser, CREATURE_BEHAVIORS.Pouncer):
-    dexterityMod = 4
-  elif creatureBehavior in (CREATURE_BEHAVIORS.Eater, CREATURE_BEHAVIORS.Filter):
-    enduranceMod = 4
-  elif creatureBehavior == CREATURE_BEHAVIORS.Killer:
-    coinFlip = roll_dice(1, 0, 1)
-    if coinFlip == 0:
-      strengthMod = 4
-    else:
-      dexterityMod = 4
-  elif creatureBehavior == CREATURE_BEHAVIORS.Hijacker:
-    strengthMod = 2
+def get_creature_instinct(creatureBehavior):
+  if creatureBehavior in (CREATURE_BEHAVIORS.Carrion_Eater, CREATURE_BEHAVIORS.Chaser, CREATURE_BEHAVIORS.Grazer, CREATURE_BEHAVIORS.Hunter):
+    instinctMod = 2
+  elif creatureBehavior in (CREATURE_BEHAVIORS.Killer, CREATURE_BEHAVIORS.Pouncer):
+    instinctMod = 4
   else:
-    0 # Do nothing
+    instinctMod = 0
+  
+  return roll_dice(2) + instinctMod
 
-  if chosenTerrain in (TERRAIN_OPTIONS.Desert, TERRAIN_OPTIONS.Jungle):
+def gen_creature_characteristics_info(creatureCharNum, creatureBehaviorNum, strengthMod, dexterityMod, enduranceMod):
+  if creatureCharNum == 1:
+    dexerity  = str(roll_dice() + dexterityMod)
+    endurance = str(1 + enduranceMod)
+    strength  = 1 + strengthMod
+    damage    = get_creature_damage(strength)
+    weight    = "1"
+  elif creatureCharNum == 2:
+    dexerity  = str(roll_dice() + dexterityMod)
+    endurance = str(2 + enduranceMod)
+    strength  = 2 + strengthMod
+    damage    = get_creature_damage(strength)
+    weight    = "3"
+  elif creatureCharNum == 3:
+    dexerity  = str(roll_dice(2) + dexterityMod)
+    endurance = str(roll_dice() + enduranceMod)
+    strength  = roll_dice() + strengthMod
+    damage    = get_creature_damage(strength)
+    weight    = "6"
+  elif creatureCharNum == 4:
+    dexerity  = str(roll_dice(2) + dexterityMod)
+    endurance = str(roll_dice() + enduranceMod)
+    strength  = roll_dice() + strengthMod
+    damage    = get_creature_damage(strength)
+    weight    = "12"
+  elif creatureCharNum == 5:
+    dexerity  = str(roll_dice(3) + dexterityMod)
+    endurance = str(roll_dice(2) + enduranceMod)
+    strength  = roll_dice(2) + strengthMod
+    damage    = get_creature_damage(strength)
+    weight    = "25"
+  elif creatureCharNum == 6:
+    dexerity  = str(roll_dice(4) + dexterityMod)
+    endurance = str(roll_dice(2) + enduranceMod)
+    strength  = roll_dice(2) + strengthMod
+    damage    = get_creature_damage(strength)
+    weight    = "50"
+  elif creatureCharNum == 7:
+    dexerity  = str(roll_dice(3) + dexterityMod)
+    endurance = str(roll_dice(3) + enduranceMod)
+    strength  = roll_dice(3) + strengthMod
+    damage    = get_creature_damage(strength)
+    weight    = "100"
+  elif creatureCharNum == 8:
+    dexerity  = str(roll_dice(3) + dexterityMod)
+    endurance = str(roll_dice(3) + enduranceMod)
+    strength  = roll_dice(3) + strengthMod
+    damage    = get_creature_damage(strength)
+    weight    = "200"
+  elif creatureCharNum == 9:
+    dexerity  = str(roll_dice(2) + dexterityMod)
+    endurance = str(roll_dice(4) + enduranceMod)
+    strength  = roll_dice(4) + strengthMod
+    damage    = get_creature_damage(strength)
+    weight    = "400"
+  elif creatureCharNum == 10:
+    dexerity  = str(roll_dice(2) + dexterityMod)
+    endurance = str(roll_dice(4) + enduranceMod)
+    strength  = roll_dice(4) + strengthMod
+    damage    = get_creature_damage(strength)
+    weight    = "800"
+  elif creatureCharNum == 11:
+    dexerity  = str(roll_dice(2) + dexterityMod)
+    endurance = str(roll_dice(5) + enduranceMod)
+    strength  = roll_dice(5) + strengthMod
+    damage    = get_creature_damage(strength)
+    weight    = "1600"
+  elif creatureCharNum == 12:
+    dexerity  = str(roll_dice() + dexterityMod)
+    endurance = str(roll_dice(6) + enduranceMod)
+    strength  = roll_dice(6) + strengthMod
+    damage    = get_creature_damage(strength)
+    weight    = "3200"
+  else:
+    dexerity  = str(roll_dice() + dexterityMod)
+    endurance = str(roll_dice(7) + enduranceMod)
+    strength  = roll_dice(7) + strengthMod
+    damage    = get_creature_damage(strength)
+    weight    = "5000"
+
+  intelligence = str(roll_dice(1, 0, 1))
+  instinct = str(get_creature_instinct(creatureBehaviorNum))
+  return [(weight, str(strength), dexerity, endurance, intelligence, instinct)], strength
+
+def gen_creature_characteristics(chosenTerrain):
+  if chosenTerrain in (TERRAIN_OPTIONS.Desert, TERRAIN_OPTIONS.Rough_Broken, TERRAIN_OPTIONS.Jungle):
     terrainMod = -3
+  elif chosenTerrain in (TERRAIN_OPTIONS.Forest, TERRAIN_OPTIONS.Open_Ocean):
+    terrainMod = -4
+  elif chosenTerrain == TERRAIN_OPTIONS.Woods:
+    terrainMod = -1
+  elif chosenTerrain == TERRAIN_OPTIONS.Rainforest:
+    terrainMod = -2
+  elif chosenTerrain == TERRAIN_OPTIONS.Swamp_Marsh:
+    terrainMod = 4
+  elif chosenTerrain in (TERRAIN_OPTIONS.Beach_Shore, TERRAIN_OPTIONS.Deep_Ocean):
+    terrainMod = 2
+  elif chosenTerrain in (TERRAIN_OPTIONS.Riverbank, TERRAIN_OPTIONS.Ocean_Shallows):
+    terrainMod = 1
   else:
     terrainMod = 0
 
+  creatureCharRoll = roll_dice(2) + terrainMod
+  creatureCharRoll = creatureCharRoll if creatureCharRoll >= 1 else 1
+  creatureCharRoll = creatureCharRoll if creatureCharRoll <= 13 else 13
+
+  return creatureCharRoll
+#--------------------------------------------------#
+
+# Creature weapons
+#--------------------------------------------------#
+def get_creature_damage(strength):
+  if strength <= 10:
+    return "1d6"
+  elif strength <= 20:
+    return "2d6"
+  elif strength <= 30:
+    return "3d6"
+  elif strength <= 40:
+    return "4d6"
+  elif strength <= 50:
+    return "5d6"
+  else:
+    return "6d6"
+
+def gen_creature_weapons(creatureType):
+  isScavengerType = False
+  if creatureType == CREATURE_TYPES.Carnivore:
+    creatureTypeMod = 8
+  elif creatureType == CREATURE_TYPES.Omnivore:
+    creatureTypeMod = 4
+  elif creatureType == CREATURE_TYPES.Herbivore:
+    creatureTypeMod = -6
+  else:
+    creatureTypeMod = 0
+    isScavengerType = True
+  
+  creatureWeaponRoll = roll_dice(2) + creatureTypeMod
+  return creatureWeaponRoll, isScavengerType
+#--------------------------------------------------#
+
+# Creature armour
+#--------------------------------------------------#
+CREATURE_ARMOUR_TABLE_HEADER = ["Armour Value"]
+
+CREATURE_ARMOUR_TABLE  = (["0"],["0"],["0"],["0"],["1"],["1"],["2"],["2"],["3"],["3"],["4"],["4"],["5"])
+
+def gen_creature_armour():
+  return roll_dice(2)
+#--------------------------------------------------#
+
+# Creature skills
+#--------------------------------------------------#
+def gen_creature_skills(creatureBehavior):
+  survival  = [0, "Survival"]
+  athletics = [0, "Athletics"]
+  recon     = [0, "Recon"]
+  melee     = [1, "Melee"]
+  stealth   = [-1, "Stealth"]
+  persuade  = [-1, "Persuade"]
+  deception = [-1, "Deception"]
+
+  if creatureBehavior == CREATURE_BEHAVIORS.Carrion_Eater:
+    recon[0] += 1
+  elif creatureBehavior == CREATURE_BEHAVIORS.Chaser:
+    athletics[0] += 1
+  elif creatureBehavior == CREATURE_BEHAVIORS.Gatherer:
+    stealth[0] += 2
+  elif creatureBehavior == CREATURE_BEHAVIORS.Hunter:
+    survival[0] += 1
+  elif creatureBehavior == CREATURE_BEHAVIORS.Intimidator:
+    persuade[0] += 2
+  elif creatureBehavior == CREATURE_BEHAVIORS.Killer:
+    melee[0] += 1
+  elif creatureBehavior == CREATURE_BEHAVIORS.Pouncer:
+    stealth[0]   += 1
+    recon[0]     += 1
+    athletics[0] += 1
+  elif creatureBehavior == CREATURE_BEHAVIORS.Siren:
+    deception[0] += 2
+  else:
+    0 # Do Nothing
+
+  fullSkillsList = [survival, athletics, recon, melee, stealth, persuade, deception]
+  creatureSkillsList = []
+  for skill in fullSkillsList:
+    if skill[0] >= 0:
+      creatureSkillsList.append(skill)
+
+  numRandomRanks = roll_dice()
+  creatureSkillsListLen = len(creatureSkillsList) - 1
+  i = 0
+  while i < numRandomRanks:
+    creatureSkillsList[roll_dice(1,0,creatureSkillsListLen)][0] += 1
+    i += 1
+  
+  skillString = ""
+  for creatureSkill in creatureSkillsList:
+    skillString += creatureSkill[1] + ": " + str(creatureSkill[0]) + NEW_LINE
+  
+  skillString += SEPARATOR_STRING
+  return skillString
+#--------------------------------------------------#
+
+# Creature pack
+#--------------------------------------------------#
+def gen_creature_pack(creatureBehavior):
+  if creatureBehavior in (CREATURE_BEHAVIORS.Chaser, CREATURE_BEHAVIORS.Eater, CREATURE_BEHAVIORS.Hijacker, CREATURE_BEHAVIORS.Chaser):
+    packMod = 2
+  elif creatureBehavior in (CREATURE_BEHAVIORS.Grazer, CREATURE_BEHAVIORS.Intermittent, CREATURE_BEHAVIORS.Reducer):
+    packMod = 4
+  elif creatureBehavior in (CREATURE_BEHAVIORS.Killer, CREATURE_BEHAVIORS.Trapper):
+    packMod = -2
+  elif creatureBehavior == CREATURE_BEHAVIORS.Siren:
+    packMod = -4
+  else:
+    packMod = 0
+  
+  packRoll = roll_dice(2) + packMod
+  packRoll = packRoll if packMod >= 0 else 0
+  return packRoll
+
+def get_number_encountered(creaturePackNum):
+  if creaturePackNum == 0:
+    return "1"
+  elif creaturePackNum in (1,2):
+    return str(roll_dice(1,1,3))
+  elif creaturePackNum in (3,4,5):
+    return str(roll_dice())
+  elif creaturePackNum in (6,7,8):
+    return str(roll_dice(2))
+  elif creaturePackNum in (9,10,11):
+    return str(roll_dice(3))
+  elif creaturePackNum in (12,13,14):
+    return str(roll_dice(4))
+  else:
+    return str(roll_dice(5))
 #--------------------------------------------------#
 
 # Creature movement generation
@@ -167,7 +412,7 @@ def handle_creature_movement_gen(funcArgs):
   elif chosenTerrain == TERRAIN_OPTIONS.Beach_Shore:
     movementTable = BEACH_MOVEMENT_TABLE
   elif chosenTerrain == TERRAIN_OPTIONS.Riverbank:
-    movementTable == RIVERBANK_MOVEMENT_TABLE
+    movementTable = RIVERBANK_MOVEMENT_TABLE
   elif chosenTerrain == TERRAIN_OPTIONS.Ocean_Shallows:
     movementTable = SHALLOWS_MOVEMENT_TABLE
   elif chosenTerrain == TERRAIN_OPTIONS.Open_Ocean:
@@ -176,6 +421,7 @@ def handle_creature_movement_gen(funcArgs):
     movementTable = DEEP_MOVEMENT_TABLE
   
   movementString  = "Creature Movement Info\n" + SEPARATOR_STRING
+  movementString += "Terrain: " + chosenTerrain.name + NEW_LINE
   movementString += get_table_entry(CREATURE_MOVEMENT_TABLE_HEADER, movementTable, creatureMovement) + SEPARATOR_STRING
   return movementString, creatureMovement
 #--------------------------------------------------#
@@ -185,7 +431,7 @@ def handle_creature_movement_gen(funcArgs):
 def handle_creature_type_gen(funcArgs):
   creatureType = gen_creature_type()
   typeString   = "Creature Type Info\n" + SEPARATOR_STRING
-  typeString  += "Creature Type: " + creatureType.name + NEW_LINE + SEPARATOR_STRING
+  typeString  += "Type: " + creatureType.name + NEW_LINE + SEPARATOR_STRING
   return typeString, creatureType
 #--------------------------------------------------#
 
@@ -194,45 +440,171 @@ def handle_creature_type_gen(funcArgs):
 def handle_creature_behavior_gen(funcArgs):
   creatureBehavior = gen_creature_behavior(funcArgs[0], funcArgs[1])
   behaviorString   = "Creature Behavior Info\n" + SEPARATOR_STRING
-  behaviorString  += "Creature Behavior: " + creatureBehavior.name + NEW_LINE + \
-                     "Description: " + creatureBehavior.value + NEW_LINE + SEPARATOR_STRING
+  behaviorString  += "Behavior: " + creatureBehavior.name + NEW_LINE
+  behaviorString  += "Description: " + creatureBehavior.value + NEW_LINE + SEPARATOR_STRING
   return behaviorString, creatureBehavior
+#--------------------------------------------------#
+
+# Creature characteristics generation
+#--------------------------------------------------#
+def handle_creature_characteristics_gen(funcArgs):
+  chosenTerrain    = funcArgs[0]
+  creatureBehavior = funcArgs[1]
+
+  strengthMod  = 0
+  dexterityMod = 0
+  enduranceMod = 0
+  if creatureBehavior in (CREATURE_BEHAVIORS.Chaser, CREATURE_BEHAVIORS.Pouncer):
+    dexterityMod = 4
+  elif creatureBehavior in (CREATURE_BEHAVIORS.Eater, CREATURE_BEHAVIORS.Filter):
+    enduranceMod = 4
+  elif creatureBehavior == CREATURE_BEHAVIORS.Killer:
+    coinFlip = roll_dice(1, 0, 1)
+    if coinFlip == 0:
+      strengthMod = 4
+    else:
+      dexterityMod = 4
+  elif creatureBehavior == CREATURE_BEHAVIORS.Hijacker:
+    strengthMod = 2
+  else:
+    0 # Do nothing
+
+  creatureCharacteristics = gen_creature_characteristics(chosenTerrain)
+  characteristicsTable, creatureStrength = gen_creature_characteristics_info(creatureCharacteristics, creatureBehavior, strengthMod, dexterityMod, enduranceMod)
+
+  characteristicsString  = "Creature Characteristics Info\n" + SEPARATOR_STRING
+  characteristicsString += get_table_entry(CREATURE_CHARACTERISTICS_TABLE_HEADER, characteristicsTable, 0) + SEPARATOR_STRING
+
+  return characteristicsString, creatureStrength
+#--------------------------------------------------#
+
+# Creature weapons generation
+#--------------------------------------------------#
+def handle_creature_weapons_gen(funcArgs):
+  creatureWeapons, isScavengerType = gen_creature_weapons(funcArgs[0])
+  weaponString  = "Creature Weapon Info\n" + SEPARATOR_STRING
+  weaponString += "Weapons: "
+
+  damageMod = ""
+  if creatureWeapons <= 1:
+    weaponString += "Teeth" if isScavengerType else "None"
+  elif creatureWeapons in (2,6):
+    weaponString += "Teeth"
+  elif creatureWeapons == 3:
+    weaponString += "Horns"
+    weaponString += " and Teeth" if isScavengerType else ""
+  elif creatureWeapons == 4:
+    weaponString += "Hooves"
+    weaponString += " and Teeth" if isScavengerType else ""
+  elif creatureWeapons == 5:
+    weaponString += "Hooves and Teeth"
+  elif creatureWeapons == 7:
+    weaponString += "Claws"
+    weaponString += " and Teeth" if isScavengerType else ""
+    damageMod    += "+1"
+  elif creatureWeapons == 8:
+    weaponString += "Stinger"
+    weaponString += " and Teeth" if isScavengerType else ""
+    damageMod    += "+1"
+  elif creatureWeapons == 9:
+    weaponString += "Thrasher"
+    weaponString += " and Teeth" if isScavengerType else ""
+    damageMod    += "+1"
+  elif creatureWeapons == 10:
+    weaponString += "Claws and Teeth"
+    damageMod    += "+2"
+  elif creatureWeapons == 11:
+    weaponString += "Claws"
+    weaponString += " and Teeth" if isScavengerType else ""
+    damageMod    += "+2"
+  elif creatureWeapons == 12:
+    weaponString += "Teeth"
+    damageMod    += "+2"
+  else:
+    weaponString += "Thrasher"
+    weaponString += " and Teeth" if isScavengerType else ""
+    damageMod    += "+2"
+
+  if creatureWeapons > 1 or isScavengerType:
+    weaponString += NEW_LINE + "Damage: " + get_creature_damage(funcArgs[1]) + damageMod
+
+  weaponString += NEW_LINE + SEPARATOR_STRING
+  return weaponString, creatureWeapons
+#--------------------------------------------------#
+
+# Creature armour generation
+#--------------------------------------------------#
+def handle_creature_armour_gen(funcArgs):
+  creatureArmour = gen_creature_armour()
+  armourString = "Creature Armour Info\n" + SEPARATOR_STRING
+  armourString += get_table_entry(CREATURE_ARMOUR_TABLE_HEADER, CREATURE_ARMOUR_TABLE, creatureArmour) + SEPARATOR_STRING
+  return armourString, creatureArmour
+#--------------------------------------------------#
+
+# Creature skills generation
+#--------------------------------------------------#
+def handle_creature_skills_gen(funcArgs):
+  skillString   = "Creature Skills Info\n" + SEPARATOR_STRING
+  skillString  += gen_creature_skills(funcArgs[0])
+  return skillString, 0
+#--------------------------------------------------#
+
+# Creature pack generation
+#--------------------------------------------------#
+def handle_creature_pack_gen(funcArgs):
+  creaturePack = gen_creature_pack(funcArgs[0])
+  packString   = "Creature Pack Info\n" + SEPARATOR_STRING
+  packString  += "Pack Value: " + str(creaturePack) + NEW_LINE
+  packString  += "Number Encountered: " + get_number_encountered(creaturePack) + NEW_LINE + SEPARATOR_STRING
+  return packString, creaturePack
 #--------------------------------------------------#
 
 # Generate a new creature
 #--------------------------------------------------#
-class TERRAIN_OPTIONS(Enum):
-  Clear           = 1
-  Plain_Prairie   = 2
-  Desert          = 3
-  Hills_Foothills = 4
-  Mountain        = 5
-  Forest          = 6
-  Woods           = 7
-  Jungle          = 8
-  Rainforest      = 9
-  Rough_Broken    = 10
-  Swamp_Marsh     = 11
-  Beach_Shore     = 12
-  Riverbank       = 13
-  Ocean_Shallows  = 14
-  Open_Ocean      = 15
-  Deep_Ocean      = 16
-
 def generate_creature(creatureGenOption):
-  selectedTerrain = user_input_dialog(TERRAIN_OPTIONS, "Decide which terrain this creature resides in.\n")
+  try:
+    if creatureGenOption == INTERACTIVE_GEN_OPTIONS.ReRoll:
+      selectedTerrain = user_input_dialog(TERRAIN_OPTIONS, "Decide which terrain this creature resides in.\n")
+    else:
+      selectedTerrain = TERRAIN_OPTIONS.Random
+    
+    if selectedTerrain == TERRAIN_OPTIONS.Random:
+      selectedTerrain = get_option_by_value(TERRAIN_OPTIONS, roll_dice(1,1,16))
 
-  creatureGenOption, movementString, creatureMovement = do_interactive_gen_loop(creatureGenOption, handle_creature_movement_gen, [selectedTerrain])
-  printString = movementString + NEW_LINE
+    creatureGenOption, movementString, creatureMovement = do_interactive_gen_loop(creatureGenOption, handle_creature_movement_gen, [selectedTerrain])
+    printString = movementString + NEW_LINE
 
-  creatureGenOption, typeString, creatureType = do_interactive_gen_loop(creatureGenOption, handle_creature_type_gen, [])
-  printString += typeString + NEW_LINE
+    noArgs = []
+    creatureGenOption, typeString, creatureType = do_interactive_gen_loop(creatureGenOption, handle_creature_type_gen, noArgs)
+    printString += typeString + NEW_LINE
 
-  creatureGenOption, behaviorString, creatureBehavior = do_interactive_gen_loop(creatureGenOption, handle_creature_behavior_gen, [selectedTerrain, creatureType])
-  printString += behaviorString + NEW_LINE
+    creatureGenOption, behaviorString, creatureBehavior = do_interactive_gen_loop(creatureGenOption, handle_creature_behavior_gen, [selectedTerrain, creatureType])
+    printString += behaviorString + NEW_LINE
 
-  clear_screen()
-  print(printString)
+    creatureGenOption, characteristicsString, creatureStrength = do_interactive_gen_loop(creatureGenOption, handle_creature_characteristics_gen, [selectedTerrain, creatureBehavior])
+    printString += characteristicsString + NEW_LINE
+
+    creatureGenOption, weaponString, creatureWeapons = do_interactive_gen_loop(creatureGenOption, handle_creature_weapons_gen, [creatureType, creatureStrength])
+    printString += weaponString + NEW_LINE
+
+    creatureGenOption, armourString, creatureArmour = do_interactive_gen_loop(creatureGenOption, handle_creature_armour_gen, noArgs)
+    printString += armourString + NEW_LINE
+
+    behaviorArg = [creatureBehavior]
+    creatureGenOption, skillString, creatureSkills = do_interactive_gen_loop(creatureGenOption, handle_creature_skills_gen, behaviorArg)
+    printString += skillString + NEW_LINE
+
+    creatureGenOption, packString, creaturePack = do_interactive_gen_loop(creatureGenOption, handle_creature_pack_gen, behaviorArg)
+    printString += packString + NEW_LINE
+
+    clear_screen()
+    print(printString)
+
+  except KeyboardInterrupt:
+    clear_screen()
+    print("Failed to generate creature\n")
+    printString = ""
+
   return printString
 #--------------------------------------------------#
 

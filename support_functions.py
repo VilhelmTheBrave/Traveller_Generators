@@ -141,14 +141,14 @@ def get_cur_dir_path(fileSelfRef):
 # Prompts the user to choose a script option
 #--------------------------------------------------#
 def user_input_dialog(genOptions, extraDisplayString):
-  currentOption = 0
+  currentOption = 999
   valid_option_values = get_option_values(genOptions)
   while not currentOption in valid_option_values:
     clear_screen()
     print(extraDisplayString)
     print_option_list(genOptions)
     currentOptionInput = input ("\nChoose a valid option: ")
-    currentOption = int(currentOptionInput) if currentOptionInput.isdigit() else 0
+    currentOption = int(currentOptionInput) if currentOptionInput.isdigit() else 999
   selectedOption = get_option_by_value(genOptions, currentOption)
   return selectedOption
 #--------------------------------------------------#
@@ -174,12 +174,12 @@ def do_main_loop(scriptSelfRef, primaryGenFunc, assetName):
   try:
     currentDirectory = get_cur_dir_path(scriptSelfRef)
     clear_screen()
-    currentOption = 0
+    currentOption = 999
     currentAssetInfo = ""
     while True:
       print_option_list(GENERATOR_OPTIONS)
       currentOptionInput = input ("\nChoose a " + assetName + " generation option: ")
-      currentOption = get_option_by_value(GENERATOR_OPTIONS, int(currentOptionInput)) if currentOptionInput.isdigit() else 0
+      currentOption = get_option_by_value(GENERATOR_OPTIONS, int(currentOptionInput)) if currentOptionInput.isdigit() else 999
       if currentOption == GENERATOR_OPTIONS.Generate_Random:
         currentAssetInfo = primaryGenFunc(INTERACTIVE_GEN_OPTIONS.Quit)
       elif currentOption == GENERATOR_OPTIONS.Interactive_Generation:

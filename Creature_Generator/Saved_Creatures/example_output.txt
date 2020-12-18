@@ -1,0 +1,53 @@
+Creature Movement Info
+-----------------------------------
+Terrain: Jungle
+Movement: Fly -6
+-----------------------------------
+
+Creature Type Info
+-----------------------------------
+Type: Carnivore
+-----------------------------------
+
+Creature Behavior Info
+-----------------------------------
+Behavior: Pouncer
+Description: Pouncers kill by stalking and ambushing their prey.
+-----------------------------------
+
+Creature Characteristics Info
+-----------------------------------
+Weight (kg): 12
+Strength: 2
+Dexterity: 11
+Endurance: 1
+Intelligence: 0
+Instinct: 12
+-----------------------------------
+
+Creature Weapon Info
+-----------------------------------
+Weapons: Thrasher
+Damage: 1d6+2
+-----------------------------------
+
+Creature Armour Info
+-----------------------------------
+Armour Value: 1
+-----------------------------------
+
+Creature Skills Info
+-----------------------------------
+Survival: 2
+Athletics: 1
+Recon: 2
+Melee: 2
+Stealth: 0
+-----------------------------------
+
+Creature Pack Info
+-----------------------------------
+Pack Value: 9
+Number Encountered: 8
+-----------------------------------
+
