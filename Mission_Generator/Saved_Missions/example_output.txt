@@ -1,0 +1,20 @@
+Mission Patron Info
+-----------------------------------
+Patron: Embezzler
+-----------------------------------
+
+Mission Objective Info
+-----------------------------------
+Objective: Steal from a target
+-----------------------------------
+
+Mission Target Info
+-----------------------------------
+Target: Local Government
+-----------------------------------
+
+Mission Opposition Info
+-----------------------------------
+Opposition: Fearful peasants
+-----------------------------------
+

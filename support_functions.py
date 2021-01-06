@@ -34,6 +34,12 @@ def roll_dice(numRolls=1,diceMin=1,diceMax=6):
   return result
 #--------------------------------------------------#
 
+# Rolls d66
+#--------------------------------------------------#
+def roll_d_six_six():
+  return int(str(roll_dice()) + str(roll_dice()))
+#--------------------------------------------------#
+
 # Gets an entry from a table
 #--------------------------------------------------#
 def get_table_entry(header, table, index):

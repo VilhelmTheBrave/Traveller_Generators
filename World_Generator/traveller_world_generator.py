@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from enum import Enum
 from sys import path
 
 path.append("..")
@@ -317,7 +316,7 @@ WORLD_CULTURE_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["None"
    ["Unusual Custom: Conspiracy – something strange is going on. The government is being subverted by another group or agency."                                                                                                                                      ])
 
 def gen_world_cultural_differences():
-  return int(str(roll_dice()) + str(roll_dice()))
+  return roll_d_six_six()
 #--------------------------------------------------#
 
 # World Star Port

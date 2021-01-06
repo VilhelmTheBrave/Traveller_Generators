@@ -550,6 +550,7 @@ def handle_creature_pack_gen(funcArgs):
 #--------------------------------------------------#
 def generate_creature(creatureGenOption):
   try:
+    # Terrain
     if creatureGenOption == INTERACTIVE_GEN_OPTIONS.ReRoll:
       selectedTerrain = user_input_dialog(TERRAIN_OPTIONS, "Decide which terrain this creature resides in.\n")
     else:
@@ -558,29 +559,37 @@ def generate_creature(creatureGenOption):
     if selectedTerrain == TERRAIN_OPTIONS.Random:
       selectedTerrain = get_option_by_value(TERRAIN_OPTIONS, roll_dice(1,1,16))
 
+    # Movement
     creatureGenOption, movementString, creatureMovement = do_interactive_gen_loop(creatureGenOption, handle_creature_movement_gen, [selectedTerrain])
     printString = movementString + NEW_LINE
 
+    # Type
     noArgs = []
     creatureGenOption, typeString, creatureType = do_interactive_gen_loop(creatureGenOption, handle_creature_type_gen, noArgs)
     printString += typeString + NEW_LINE
 
+    # Behavior
     creatureGenOption, behaviorString, creatureBehavior = do_interactive_gen_loop(creatureGenOption, handle_creature_behavior_gen, [selectedTerrain, creatureType])
     printString += behaviorString + NEW_LINE
 
+    # Characteristics
     creatureGenOption, characteristicsString, creatureStrength = do_interactive_gen_loop(creatureGenOption, handle_creature_characteristics_gen, [selectedTerrain, creatureBehavior])
     printString += characteristicsString + NEW_LINE
 
+    # Weapons
     creatureGenOption, weaponString, creatureWeapons = do_interactive_gen_loop(creatureGenOption, handle_creature_weapons_gen, [creatureType, creatureStrength])
     printString += weaponString + NEW_LINE
 
+    # Armour
     creatureGenOption, armourString, creatureArmour = do_interactive_gen_loop(creatureGenOption, handle_creature_armour_gen, noArgs)
     printString += armourString + NEW_LINE
 
+    # Behavior
     behaviorArg = [creatureBehavior]
     creatureGenOption, skillString, creatureSkills = do_interactive_gen_loop(creatureGenOption, handle_creature_skills_gen, behaviorArg)
     printString += skillString + NEW_LINE
 
+    # Pack
     creatureGenOption, packString, creaturePack = do_interactive_gen_loop(creatureGenOption, handle_creature_pack_gen, behaviorArg)
     printString += packString + NEW_LINE
 
