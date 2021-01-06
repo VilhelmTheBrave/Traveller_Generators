@@ -1,0 +1,10 @@
+Encounter Location Info
+-----------------------------------
+Location: Urban
+-----------------------------------
+
+Encounter Activity Info
+-----------------------------------
+Activity: Characters spot someone they recognise
+-----------------------------------
+
