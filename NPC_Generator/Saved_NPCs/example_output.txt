@@ -1,0 +1,33 @@
+NPC Stats Info
+-----------------------------------
+Strength: 11
+Dexterity: 10
+Endurance: 8
+Intelligence: 8
+Education: 9
+Social Standing: 11
+-----------------------------------
+
+NPC Career Info
+-----------------------------------
+Career: Marines (Ground Assault)
+Rank: 2
+-----------------------------------
+
+NPC Skills Info
+-----------------------------------
+Advocate: 0
+Tactics: 3
+Medic: 0
+Gun Combat: 0
+Leadership: 1
+Battle Dress: 0
+Engineer: 0
+Gambler: 0
+-----------------------------------
+
+NPC Trait Info
+-----------------------------------
+Trait: Forgetful
+-----------------------------------
+

@@ -163,6 +163,7 @@ def handle_encounter_activity_gen(funcArgs):
     activityTable = URBAN_ACTIVITY_TABLE
   actString += get_table_entry(ENCOUNTER_ACTIVITY_TABLE_HEADER, activityTable, encounterActivity) + SEPARATOR_STRING
   return actString, encounterActivity
+#--------------------------------------------------#
 
 # Generate a new encounter
 #--------------------------------------------------#
