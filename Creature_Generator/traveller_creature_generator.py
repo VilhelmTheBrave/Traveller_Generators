@@ -69,6 +69,37 @@ DEEP_MOVEMENT_TABLE          = (["Swim +8"], ["Swim +6"      ], ["Swim +4"], ["S
 
 def gen_creature_movement():
   return roll_dice() - 1
+
+def handle_creature_movement_gen(funcArgs):
+  chosenTerrain = funcArgs[0]
+  creatureMovement = gen_creature_movement()
+  if chosenTerrain in (TERRAIN_OPTIONS.Clear, TERRAIN_OPTIONS.Jungle):
+    movementTable = CLEAR_JUNGLE_MOVEMENT_TABLE
+  elif chosenTerrain == TERRAIN_OPTIONS.Plain_Prairie:
+    movementTable = PLAIN_MOVEMENT_TABLE
+  elif chosenTerrain in (TERRAIN_OPTIONS.Desert, TERRAIN_OPTIONS.Forest):
+    movementTable = DESERT_FOREST_MOVEMENT_TABLE
+  elif chosenTerrain in (TERRAIN_OPTIONS.Hills_Foothills, TERRAIN_OPTIONS.Rough_Broken):
+    movementTable = HILLS_ROUGH_MOVEMENT_TABLE
+  elif chosenTerrain == TERRAIN_OPTIONS.Woods:
+    movementTable = WOODS_MOVEMENT_TABLE
+  elif chosenTerrain == TERRAIN_OPTIONS.Swamp_Marsh:
+    movementTable = SWAMP_MOVEMENT_TABLE
+  elif chosenTerrain == TERRAIN_OPTIONS.Beach_Shore:
+    movementTable = BEACH_MOVEMENT_TABLE
+  elif chosenTerrain == TERRAIN_OPTIONS.Riverbank:
+    movementTable = RIVERBANK_MOVEMENT_TABLE
+  elif chosenTerrain == TERRAIN_OPTIONS.Ocean_Shallows:
+    movementTable = SHALLOWS_MOVEMENT_TABLE
+  elif chosenTerrain == TERRAIN_OPTIONS.Open_Ocean:
+    movementTable = OPEN_MOVEMENT_TABLE
+  else:
+    movementTable = DEEP_MOVEMENT_TABLE
+  
+  movementString  = "Creature Movement Info\n" + SEPARATOR_STRING
+  movementString += "Terrain: " + chosenTerrain.name + NEW_LINE
+  movementString += get_table_entry(CREATURE_MOVEMENT_TABLE_HEADER, movementTable, creatureMovement) + SEPARATOR_STRING
+  return movementString, creatureMovement
 #--------------------------------------------------#
 
 # Creature Type
@@ -80,6 +111,12 @@ def gen_creature_type():
       creatureType = creatureTypeEntry
       break
   return creatureType
+
+def handle_creature_type_gen(funcArgs):
+  creatureType = gen_creature_type()
+  typeString   = "Creature Type Info\n" + SEPARATOR_STRING
+  typeString  += "Type: " + creatureType.name + NEW_LINE + SEPARATOR_STRING
+  return typeString, creatureType
 #--------------------------------------------------#
 
 # Creature Behavior
@@ -137,6 +174,13 @@ def gen_creature_behavior(chosenTerrain, creatureType):
       creatureBehavior = CREATURE_BEHAVIORS.Intimidator
 
   return creatureBehavior
+
+def handle_creature_behavior_gen(funcArgs):
+  creatureBehavior = gen_creature_behavior(funcArgs[0], funcArgs[1])
+  behaviorString   = "Creature Behavior Info\n" + SEPARATOR_STRING
+  behaviorString  += "Behavior: " + creatureBehavior.name + NEW_LINE
+  behaviorString  += "Description: " + creatureBehavior.value + NEW_LINE + SEPARATOR_STRING
+  return behaviorString, creatureBehavior
 #--------------------------------------------------#
 
 # Creature characteristics
@@ -247,6 +291,36 @@ def gen_creature_characteristics(chosenTerrain):
   creatureCharRoll = creatureCharRoll if creatureCharRoll <= 13 else 13
 
   return creatureCharRoll
+
+def handle_creature_characteristics_gen(funcArgs):
+  chosenTerrain    = funcArgs[0]
+  creatureBehavior = funcArgs[1]
+
+  strengthMod  = 0
+  dexterityMod = 0
+  enduranceMod = 0
+  if creatureBehavior in (CREATURE_BEHAVIORS.Chaser, CREATURE_BEHAVIORS.Pouncer):
+    dexterityMod = 4
+  elif creatureBehavior in (CREATURE_BEHAVIORS.Eater, CREATURE_BEHAVIORS.Filter):
+    enduranceMod = 4
+  elif creatureBehavior == CREATURE_BEHAVIORS.Killer:
+    coinFlip = roll_dice(1, 0, 1)
+    if coinFlip == 0:
+      strengthMod = 4
+    else:
+      dexterityMod = 4
+  elif creatureBehavior == CREATURE_BEHAVIORS.Hijacker:
+    strengthMod = 2
+  else:
+    0 # Do nothing
+
+  creatureCharacteristics = gen_creature_characteristics(chosenTerrain)
+  characteristicsTable, creatureStrength = gen_creature_characteristics_info(creatureCharacteristics, creatureBehavior, strengthMod, dexterityMod, enduranceMod)
+
+  characteristicsString  = "Creature Characteristics Info\n" + SEPARATOR_STRING
+  characteristicsString += get_table_entry(CREATURE_CHARACTERISTICS_TABLE_HEADER, characteristicsTable, 0) + SEPARATOR_STRING
+
+  return characteristicsString, creatureStrength
 #--------------------------------------------------#
 
 # Creature weapons
@@ -279,6 +353,57 @@ def gen_creature_weapons(creatureType):
   
   creatureWeaponRoll = roll_dice(2) + creatureTypeMod
   return creatureWeaponRoll, isScavengerType
+
+def handle_creature_weapons_gen(funcArgs):
+  creatureWeapons, isScavengerType = gen_creature_weapons(funcArgs[0])
+  weaponString  = "Creature Weapon Info\n" + SEPARATOR_STRING
+  weaponString += "Weapons: "
+
+  damageMod = ""
+  if creatureWeapons <= 1:
+    weaponString += "Teeth" if isScavengerType else "None"
+  elif creatureWeapons in (2,6):
+    weaponString += "Teeth"
+  elif creatureWeapons == 3:
+    weaponString += "Horns"
+    weaponString += " and Teeth" if isScavengerType else ""
+  elif creatureWeapons == 4:
+    weaponString += "Hooves"
+    weaponString += " and Teeth" if isScavengerType else ""
+  elif creatureWeapons == 5:
+    weaponString += "Hooves and Teeth"
+  elif creatureWeapons == 7:
+    weaponString += "Claws"
+    weaponString += " and Teeth" if isScavengerType else ""
+    damageMod    += "+1"
+  elif creatureWeapons == 8:
+    weaponString += "Stinger"
+    weaponString += " and Teeth" if isScavengerType else ""
+    damageMod    += "+1"
+  elif creatureWeapons == 9:
+    weaponString += "Thrasher"
+    weaponString += " and Teeth" if isScavengerType else ""
+    damageMod    += "+1"
+  elif creatureWeapons == 10:
+    weaponString += "Claws and Teeth"
+    damageMod    += "+2"
+  elif creatureWeapons == 11:
+    weaponString += "Claws"
+    weaponString += " and Teeth" if isScavengerType else ""
+    damageMod    += "+2"
+  elif creatureWeapons == 12:
+    weaponString += "Teeth"
+    damageMod    += "+2"
+  else:
+    weaponString += "Thrasher"
+    weaponString += " and Teeth" if isScavengerType else ""
+    damageMod    += "+2"
+
+  if creatureWeapons > 1 or isScavengerType:
+    weaponString += NEW_LINE + "Damage: " + get_creature_damage(funcArgs[1]) + damageMod
+
+  weaponString += NEW_LINE + SEPARATOR_STRING
+  return weaponString, creatureWeapons
 #--------------------------------------------------#
 
 # Creature armour
@@ -289,6 +414,12 @@ CREATURE_ARMOUR_TABLE  = (["0"],["0"],["0"],["0"],["1"],["1"],["2"],["2"],["3"],
 
 def gen_creature_armour():
   return roll_dice(2)
+
+def handle_creature_armour_gen(funcArgs):
+  creatureArmour = gen_creature_armour()
+  armourString = "Creature Armour Info\n" + SEPARATOR_STRING
+  armourString += get_table_entry(CREATURE_ARMOUR_TABLE_HEADER, CREATURE_ARMOUR_TABLE, creatureArmour) + SEPARATOR_STRING
+  return armourString, creatureArmour
 #--------------------------------------------------#
 
 # Creature skills
@@ -342,6 +473,11 @@ def gen_creature_skills(creatureBehavior):
   
   skillString += SEPARATOR_STRING
   return skillString
+
+def handle_creature_skills_gen(funcArgs):
+  skillString   = "Creature Skills Info\n" + SEPARATOR_STRING
+  skillString  += gen_creature_skills(funcArgs[0])
+  return skillString, 0
 #--------------------------------------------------#
 
 # Creature pack
@@ -377,167 +513,7 @@ def get_number_encountered(creaturePackNum):
     return str(roll_dice(4))
   else:
     return str(roll_dice(5))
-#--------------------------------------------------#
 
-# Creature movement generation
-#--------------------------------------------------#
-def handle_creature_movement_gen(funcArgs):
-  chosenTerrain = funcArgs[0]
-  creatureMovement = gen_creature_movement()
-  if chosenTerrain in (TERRAIN_OPTIONS.Clear, TERRAIN_OPTIONS.Jungle):
-    movementTable = CLEAR_JUNGLE_MOVEMENT_TABLE
-  elif chosenTerrain == TERRAIN_OPTIONS.Plain_Prairie:
-    movementTable = PLAIN_MOVEMENT_TABLE
-  elif chosenTerrain in (TERRAIN_OPTIONS.Desert, TERRAIN_OPTIONS.Forest):
-    movementTable = DESERT_FOREST_MOVEMENT_TABLE
-  elif chosenTerrain in (TERRAIN_OPTIONS.Hills_Foothills, TERRAIN_OPTIONS.Rough_Broken):
-    movementTable = HILLS_ROUGH_MOVEMENT_TABLE
-  elif chosenTerrain == TERRAIN_OPTIONS.Woods:
-    movementTable = WOODS_MOVEMENT_TABLE
-  elif chosenTerrain == TERRAIN_OPTIONS.Swamp_Marsh:
-    movementTable = SWAMP_MOVEMENT_TABLE
-  elif chosenTerrain == TERRAIN_OPTIONS.Beach_Shore:
-    movementTable = BEACH_MOVEMENT_TABLE
-  elif chosenTerrain == TERRAIN_OPTIONS.Riverbank:
-    movementTable = RIVERBANK_MOVEMENT_TABLE
-  elif chosenTerrain == TERRAIN_OPTIONS.Ocean_Shallows:
-    movementTable = SHALLOWS_MOVEMENT_TABLE
-  elif chosenTerrain == TERRAIN_OPTIONS.Open_Ocean:
-    movementTable = OPEN_MOVEMENT_TABLE
-  else:
-    movementTable = DEEP_MOVEMENT_TABLE
-  
-  movementString  = "Creature Movement Info\n" + SEPARATOR_STRING
-  movementString += "Terrain: " + chosenTerrain.name + NEW_LINE
-  movementString += get_table_entry(CREATURE_MOVEMENT_TABLE_HEADER, movementTable, creatureMovement) + SEPARATOR_STRING
-  return movementString, creatureMovement
-#--------------------------------------------------#
-
-# Creature type generation
-#--------------------------------------------------#
-def handle_creature_type_gen(funcArgs):
-  creatureType = gen_creature_type()
-  typeString   = "Creature Type Info\n" + SEPARATOR_STRING
-  typeString  += "Type: " + creatureType.name + NEW_LINE + SEPARATOR_STRING
-  return typeString, creatureType
-#--------------------------------------------------#
-
-# Creature behavior generation
-#--------------------------------------------------#
-def handle_creature_behavior_gen(funcArgs):
-  creatureBehavior = gen_creature_behavior(funcArgs[0], funcArgs[1])
-  behaviorString   = "Creature Behavior Info\n" + SEPARATOR_STRING
-  behaviorString  += "Behavior: " + creatureBehavior.name + NEW_LINE
-  behaviorString  += "Description: " + creatureBehavior.value + NEW_LINE + SEPARATOR_STRING
-  return behaviorString, creatureBehavior
-#--------------------------------------------------#
-
-# Creature characteristics generation
-#--------------------------------------------------#
-def handle_creature_characteristics_gen(funcArgs):
-  chosenTerrain    = funcArgs[0]
-  creatureBehavior = funcArgs[1]
-
-  strengthMod  = 0
-  dexterityMod = 0
-  enduranceMod = 0
-  if creatureBehavior in (CREATURE_BEHAVIORS.Chaser, CREATURE_BEHAVIORS.Pouncer):
-    dexterityMod = 4
-  elif creatureBehavior in (CREATURE_BEHAVIORS.Eater, CREATURE_BEHAVIORS.Filter):
-    enduranceMod = 4
-  elif creatureBehavior == CREATURE_BEHAVIORS.Killer:
-    coinFlip = roll_dice(1, 0, 1)
-    if coinFlip == 0:
-      strengthMod = 4
-    else:
-      dexterityMod = 4
-  elif creatureBehavior == CREATURE_BEHAVIORS.Hijacker:
-    strengthMod = 2
-  else:
-    0 # Do nothing
-
-  creatureCharacteristics = gen_creature_characteristics(chosenTerrain)
-  characteristicsTable, creatureStrength = gen_creature_characteristics_info(creatureCharacteristics, creatureBehavior, strengthMod, dexterityMod, enduranceMod)
-
-  characteristicsString  = "Creature Characteristics Info\n" + SEPARATOR_STRING
-  characteristicsString += get_table_entry(CREATURE_CHARACTERISTICS_TABLE_HEADER, characteristicsTable, 0) + SEPARATOR_STRING
-
-  return characteristicsString, creatureStrength
-#--------------------------------------------------#
-
-# Creature weapons generation
-#--------------------------------------------------#
-def handle_creature_weapons_gen(funcArgs):
-  creatureWeapons, isScavengerType = gen_creature_weapons(funcArgs[0])
-  weaponString  = "Creature Weapon Info\n" + SEPARATOR_STRING
-  weaponString += "Weapons: "
-
-  damageMod = ""
-  if creatureWeapons <= 1:
-    weaponString += "Teeth" if isScavengerType else "None"
-  elif creatureWeapons in (2,6):
-    weaponString += "Teeth"
-  elif creatureWeapons == 3:
-    weaponString += "Horns"
-    weaponString += " and Teeth" if isScavengerType else ""
-  elif creatureWeapons == 4:
-    weaponString += "Hooves"
-    weaponString += " and Teeth" if isScavengerType else ""
-  elif creatureWeapons == 5:
-    weaponString += "Hooves and Teeth"
-  elif creatureWeapons == 7:
-    weaponString += "Claws"
-    weaponString += " and Teeth" if isScavengerType else ""
-    damageMod    += "+1"
-  elif creatureWeapons == 8:
-    weaponString += "Stinger"
-    weaponString += " and Teeth" if isScavengerType else ""
-    damageMod    += "+1"
-  elif creatureWeapons == 9:
-    weaponString += "Thrasher"
-    weaponString += " and Teeth" if isScavengerType else ""
-    damageMod    += "+1"
-  elif creatureWeapons == 10:
-    weaponString += "Claws and Teeth"
-    damageMod    += "+2"
-  elif creatureWeapons == 11:
-    weaponString += "Claws"
-    weaponString += " and Teeth" if isScavengerType else ""
-    damageMod    += "+2"
-  elif creatureWeapons == 12:
-    weaponString += "Teeth"
-    damageMod    += "+2"
-  else:
-    weaponString += "Thrasher"
-    weaponString += " and Teeth" if isScavengerType else ""
-    damageMod    += "+2"
-
-  if creatureWeapons > 1 or isScavengerType:
-    weaponString += NEW_LINE + "Damage: " + get_creature_damage(funcArgs[1]) + damageMod
-
-  weaponString += NEW_LINE + SEPARATOR_STRING
-  return weaponString, creatureWeapons
-#--------------------------------------------------#
-
-# Creature armour generation
-#--------------------------------------------------#
-def handle_creature_armour_gen(funcArgs):
-  creatureArmour = gen_creature_armour()
-  armourString = "Creature Armour Info\n" + SEPARATOR_STRING
-  armourString += get_table_entry(CREATURE_ARMOUR_TABLE_HEADER, CREATURE_ARMOUR_TABLE, creatureArmour) + SEPARATOR_STRING
-  return armourString, creatureArmour
-#--------------------------------------------------#
-
-# Creature skills generation
-#--------------------------------------------------#
-def handle_creature_skills_gen(funcArgs):
-  skillString   = "Creature Skills Info\n" + SEPARATOR_STRING
-  skillString  += gen_creature_skills(funcArgs[0])
-  return skillString, 0
-#--------------------------------------------------#
-
-# Creature pack generation
-#--------------------------------------------------#
 def handle_creature_pack_gen(funcArgs):
   creaturePack = gen_creature_pack(funcArgs[0])
   packString   = "Creature Pack Info\n" + SEPARATOR_STRING
@@ -598,7 +574,7 @@ def generate_creature(creatureGenOption):
 
   except KeyboardInterrupt:
     clear_screen()
-    print("Failed to generate creature\n")
+    print("Failed to generate Creature\n")
     printString = ""
 
   return printString

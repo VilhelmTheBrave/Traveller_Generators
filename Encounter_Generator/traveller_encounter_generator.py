@@ -147,10 +147,7 @@ URBAN_ACTIVITY_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["None
   ["Public announcement"                                       ],
   ["Sports event"                                              ],
   ["Imperial Dignitary"                                        ])
-#--------------------------------------------------#
 
-# Encounter activity generation
-#--------------------------------------------------#
 def handle_encounter_activity_gen(funcArgs):
   encounterLocation = funcArgs[0]
   encounterActivity = roll_d_six_six()

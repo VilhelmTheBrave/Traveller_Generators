@@ -23,6 +23,12 @@ WORLD_SIZE_TABLE = (("800"  , "Negligible"),
 
 def gen_world_size():
   return roll_dice(2) - 2
+
+def handle_world_size_gen(funcArgs):
+  worldSize   = gen_world_size()
+  sizeString  = "World Size Info\n" + SEPARATOR_STRING
+  sizeString += get_table_entry(WORLD_SIZE_TABLE_HEADER, WORLD_SIZE_TABLE, worldSize) + SEPARATOR_STRING
+  return sizeString, worldSize
 #--------------------------------------------------#
 
 # World Atmosphere
@@ -49,6 +55,13 @@ WORLD_ATMOSPHERE_TABLE = (("None"              , "0.00"         , "Vacc Suit"   
 def gen_world_atmosphere(worldSizeNum):
   worldAtmosphereNum = roll_dice(2) - 7 + worldSizeNum
   return worldAtmosphereNum if worldAtmosphereNum >= 0 else 0
+
+def handle_world_atmos_gen(funcArgs):
+  worldSize         = funcArgs[0]
+  worldAtmosphere   = gen_world_atmosphere(worldSize)
+  atmosphereString  = "World Atmosphere Info\n" + SEPARATOR_STRING
+  atmosphereString += get_table_entry(WORLD_ATMOSPHERE_TABLE_HEADER, WORLD_ATMOSPHERE_TABLE, worldAtmosphere) + SEPARATOR_STRING
+  return atmosphereString, worldAtmosphere
 #--------------------------------------------------#
 
 # World Temperature
@@ -92,6 +105,17 @@ def gen_world_temperature(worldAtmosphereNum):
   temperatureRoll = roll_dice(2) + atmosphereMod
   temperatureRoll = temperatureRoll if temperatureRoll >= 0 else 0
   return temperatureRoll
+
+def handle_world_temp_gen(funcArgs):
+  worldAtmosphere    = funcArgs[0]
+  worldTemperature   = gen_world_temperature(worldAtmosphere)
+  temperatureString  = "World Temperature Info\n" + SEPARATOR_STRING
+  temperatureString += get_table_entry(WORLD_TEMPERATURE_TABLE_HEADER, WORLD_TEMPERATURE_TABLE, worldTemperature)
+  if worldAtmosphere in (0,1):
+    temperatureString += "Notes: Temperature swings from roasting during the day to frozen at night.\n" + SEPARATOR_STRING
+  else:
+    temperatureString += SEPARATOR_STRING
+  return temperatureString, worldTemperature
 #--------------------------------------------------#
 
 # World Hydrographics
@@ -127,6 +151,15 @@ def gen_world_hydrographics(worldSizeNum, worldAtmosphereNum, worldTemperatureNu
   hydrographicsRoll = hydrographicsRoll if hydrographicsRoll >= 0 else 0
   hydrographicsRoll = hydrographicsRoll if hydrographicsRoll <= 10 else 10
   return hydrographicsRoll
+
+def handle_world_hydro_gen(funcArgs):
+  worldSize            = funcArgs[0]
+  worldAtmosphere      = funcArgs[1]
+  worldTemperature     = funcArgs[2]
+  worldHydrographics   = gen_world_hydrographics(worldSize, worldAtmosphere, worldTemperature)
+  hydrographicsString  = "World Hydrographics Info\n" + SEPARATOR_STRING
+  hydrographicsString += get_table_entry(WORLD_HYDROGRAPHICS_TABLE_HEADER, WORLD_HYDROGRAPHICS_TABLE, worldHydrographics) + SEPARATOR_STRING
+  return hydrographicsString, worldHydrographics
 #--------------------------------------------------#
 
 # World Population
@@ -149,6 +182,12 @@ WORLD_POPULATION_TABLE = (("None"                 , "0"             , "Uninhabit
 
 def gen_world_population():
   return roll_dice(2) - 2
+
+def handle_world_pop_gen(funcArgs):
+  worldPopulation   = gen_world_population()
+  populationString  = "World Population Info\n" + SEPARATOR_STRING
+  populationString += get_table_entry(WORLD_POPULATION_TABLE_HEADER, WORLD_POPULATION_TABLE, worldPopulation) + SEPARATOR_STRING
+  return populationString, worldPopulation
 #--------------------------------------------------#
 
 # World Government
@@ -189,6 +228,14 @@ def gen_world_government(worldPopulationNum):
   governmentRoll = governmentRoll if governmentRoll >= 0 else 0
   governmentRoll = governmentRoll if governmentRoll <= 13 else 13
   return governmentRoll
+
+def handle_world_gov_gen(funcArgs):
+  populationNotZero = funcArgs[0]
+  worldPopulation   = funcArgs[1]
+  worldGovernment   = gen_world_government(worldPopulation) if populationNotZero else 0
+  governmentString  = "World Government Info\n" + SEPARATOR_STRING
+  governmentString += get_table_entry(WORLD_GOVERNMENT_TABLE_HEADER, WORLD_GOVERNMENT_TABLE, worldGovernment) + SEPARATOR_STRING
+  return governmentString, worldGovernment
 #--------------------------------------------------#
 
 # World Factions
@@ -224,6 +271,24 @@ def gen_world_factions(worldGovernmentNum):
     factionList.append(roll_dice(2))
     i += 1
   return factionList
+
+def handle_world_factions_gen(funcArgs):
+  populationNotZero = funcArgs[0]
+  worldGovernment   = funcArgs[1]
+  worldFactions     = gen_world_factions(worldGovernment) if populationNotZero else []
+  factionString     = "World Factions Info\n" + SEPARATOR_STRING
+  factionListLength = len(worldFactions)
+  if factionListLength > 0:
+    fIndex = 0
+    while fIndex < factionListLength:
+      factionString += NEW_LINE if fIndex > 0 else ""
+      factionString += "Name: Faction" + str(fIndex + 1)  + NEW_LINE
+      factionString += get_table_entry(WORLD_FACTIONS_TABLE_HEADER, WORLD_FACTIONS_TABLE, worldFactions[fIndex])
+      fIndex += 1
+  else:
+    factionString += "None\n"
+  factionString += SEPARATOR_STRING
+  return factionString, worldFactions
 #--------------------------------------------------#
 
 # World Law Level
@@ -266,6 +331,15 @@ def gen_world_law_level(worldGovernmentNum):
   lawRoll = lawRoll if lawRoll >= 0 else 0
   lawRoll = lawRoll if lawRoll <= 9 else 9
   return lawRoll
+
+def handle_world_law_gen(funcArgs):
+  populationNotZero = funcArgs[0]
+  worldGovernment   = funcArgs[1]
+  worldLawLevel     = gen_world_law_level(worldGovernment) if populationNotZero else 0
+  lawString         = "World Illegal Possessions Info\n" + SEPARATOR_STRING
+  lawString        += "Law Level: " + str(worldLawLevel) + NEW_LINE
+  lawString        += get_table_entry(WORLD_LAW_TABLE_HEADER, WORLD_LAW_TABLE, worldLawLevel) + SEPARATOR_STRING
+  return lawString, worldLawLevel
 #--------------------------------------------------#
 
 # World Cultural Differences
@@ -317,6 +391,13 @@ WORLD_CULTURE_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["None"
 
 def gen_world_cultural_differences():
   return roll_d_six_six()
+
+def handle_world_culture_gen(funcArgs):
+  populationNotZero = funcArgs[0]
+  worldCulture      = gen_world_cultural_differences() if populationNotZero else 0
+  cultureString     = "World Cultural Differences Info\n" + SEPARATOR_STRING
+  cultureString    += get_table_entry(WORLD_CULTURE_TABLE_HEADER, WORLD_CULTURE_TABLE, worldCulture) + SEPARATOR_STRING
+  return cultureString, worldCulture
 #--------------------------------------------------#
 
 # World Star Port
@@ -368,6 +449,14 @@ def gen_world_star_port_table(worldStarportNum):
 
 def gen_world_star_port():
   return roll_dice(2)
+
+def handle_world_starport_gen(funcArgs):
+  populationNotZero  = funcArgs[0]
+  worldStarport      = gen_world_star_port() if populationNotZero else 0
+  worldStarportTable = gen_world_star_port_table(worldStarport)
+  starportString     = "World Starport Info\n" + SEPARATOR_STRING
+  starportString    += get_table_entry(WORLD_STAR_PORT_TABLE_HEADER, worldStarportTable, worldStarport) + SEPARATOR_STRING
+  return starportString, worldStarport
 #--------------------------------------------------#
 
 # World Technology Level
@@ -427,6 +516,19 @@ def gen_world_tech_level(starPortNum, sizeNum, atmosNum, hydroNum, popNum, govNu
   techRoll = techRoll if techRoll >= 0 else 0
   techRoll = techRoll if techRoll <= 15 else 15
   return techRoll
+
+def handle_world_tech_gen(funcArgs):
+  populationNotZero  = funcArgs[0]
+  worldStarport      = funcArgs[1]
+  worldSize          = funcArgs[2]
+  worldAtmosphere    = funcArgs[3]
+  worldHydrographics = funcArgs[4]
+  worldPopulation    = funcArgs[5]
+  worldGovernment    = funcArgs[6]
+  worldTechLevel     = gen_world_tech_level(worldStarport, worldSize, worldAtmosphere, worldHydrographics, worldPopulation, worldGovernment) if populationNotZero else 0
+  techString         = "World Technology Info\n" + SEPARATOR_STRING
+  techString        += "Tech Level: " + str(worldTechLevel) + NEW_LINE + SEPARATOR_STRING
+  return techString, worldTechLevel
 #--------------------------------------------------#
 
 # World Trade Codes
@@ -491,145 +593,7 @@ def gen_world_trade_codes(sizeNum, atmosNum, hydroNum, popNum, govNum, lawNum, t
   if hydroNum == 10:
     tradeCodes.append(17)
   return tradeCodes
-#--------------------------------------------------#
 
-# World size generation
-#--------------------------------------------------#
-def handle_world_size_gen(funcArgs):
-  worldSize   = gen_world_size()
-  sizeString  = "World Size Info\n" + SEPARATOR_STRING
-  sizeString += get_table_entry(WORLD_SIZE_TABLE_HEADER, WORLD_SIZE_TABLE, worldSize) + SEPARATOR_STRING
-  return sizeString, worldSize
-#--------------------------------------------------#
-
-# World atmosphere generation
-#--------------------------------------------------#
-def handle_world_atmos_gen(funcArgs):
-  worldSize         = funcArgs[0]
-  worldAtmosphere   = gen_world_atmosphere(worldSize)
-  atmosphereString  = "World Atmosphere Info\n" + SEPARATOR_STRING
-  atmosphereString += get_table_entry(WORLD_ATMOSPHERE_TABLE_HEADER, WORLD_ATMOSPHERE_TABLE, worldAtmosphere) + SEPARATOR_STRING
-  return atmosphereString, worldAtmosphere
-#--------------------------------------------------#
-
-# World temperature generation
-#--------------------------------------------------#
-def handle_world_temp_gen(funcArgs):
-  worldAtmosphere    = funcArgs[0]
-  worldTemperature   = gen_world_temperature(worldAtmosphere)
-  temperatureString  = "World Temperature Info\n" + SEPARATOR_STRING
-  temperatureString += get_table_entry(WORLD_TEMPERATURE_TABLE_HEADER, WORLD_TEMPERATURE_TABLE, worldTemperature)
-  if worldAtmosphere in (0,1):
-    temperatureString += "Notes: Temperature swings from roasting during the day to frozen at night.\n" + SEPARATOR_STRING
-  else:
-    temperatureString += SEPARATOR_STRING
-  return temperatureString, worldTemperature
-#--------------------------------------------------#
-
-# World hydrographics generation
-#--------------------------------------------------#
-def handle_world_hydro_gen(funcArgs):
-  worldSize            = funcArgs[0]
-  worldAtmosphere      = funcArgs[1]
-  worldTemperature     = funcArgs[2]
-  worldHydrographics   = gen_world_hydrographics(worldSize, worldAtmosphere, worldTemperature)
-  hydrographicsString  = "World Hydrographics Info\n" + SEPARATOR_STRING
-  hydrographicsString += get_table_entry(WORLD_HYDROGRAPHICS_TABLE_HEADER, WORLD_HYDROGRAPHICS_TABLE, worldHydrographics) + SEPARATOR_STRING
-  return hydrographicsString, worldHydrographics
-#--------------------------------------------------#
-
-# World population generation
-#--------------------------------------------------#
-def handle_world_pop_gen(funcArgs):
-  worldPopulation   = gen_world_population()
-  populationString  = "World Population Info\n" + SEPARATOR_STRING
-  populationString += get_table_entry(WORLD_POPULATION_TABLE_HEADER, WORLD_POPULATION_TABLE, worldPopulation) + SEPARATOR_STRING
-  return populationString, worldPopulation
-#--------------------------------------------------#
-
-# World government generation
-#--------------------------------------------------#
-def handle_world_gov_gen(funcArgs):
-  populationNotZero = funcArgs[0]
-  worldPopulation   = funcArgs[1]
-  worldGovernment   = gen_world_government(worldPopulation) if populationNotZero else 0
-  governmentString  = "World Government Info\n" + SEPARATOR_STRING
-  governmentString += get_table_entry(WORLD_GOVERNMENT_TABLE_HEADER, WORLD_GOVERNMENT_TABLE, worldGovernment) + SEPARATOR_STRING
-  return governmentString, worldGovernment
-#--------------------------------------------------#
-
-# World factions generation
-#--------------------------------------------------#
-def handle_world_factions_gen(funcArgs):
-  populationNotZero = funcArgs[0]
-  worldGovernment   = funcArgs[1]
-  worldFactions     = gen_world_factions(worldGovernment) if populationNotZero else []
-  factionString     = "World Factions Info\n" + SEPARATOR_STRING
-  factionListLength = len(worldFactions)
-  if factionListLength > 0:
-    fIndex = 0
-    while fIndex < factionListLength:
-      factionString += NEW_LINE if fIndex > 0 else ""
-      factionString += "Name: Faction" + str(fIndex + 1)  + NEW_LINE
-      factionString += get_table_entry(WORLD_FACTIONS_TABLE_HEADER, WORLD_FACTIONS_TABLE, worldFactions[fIndex])
-      fIndex += 1
-  else:
-    factionString += "None\n"
-  factionString += SEPARATOR_STRING
-  return factionString, worldFactions
-#--------------------------------------------------#
-
-# World law generation
-#--------------------------------------------------#
-def handle_world_law_gen(funcArgs):
-  populationNotZero = funcArgs[0]
-  worldGovernment   = funcArgs[1]
-  worldLawLevel     = gen_world_law_level(worldGovernment) if populationNotZero else 0
-  lawString         = "World Illegal Possessions Info\n" + SEPARATOR_STRING
-  lawString        += "Law Level: " + str(worldLawLevel) + NEW_LINE
-  lawString        += get_table_entry(WORLD_LAW_TABLE_HEADER, WORLD_LAW_TABLE, worldLawLevel) + SEPARATOR_STRING
-  return lawString, worldLawLevel
-#--------------------------------------------------#
-
-# World culture generation
-#--------------------------------------------------#
-def handle_world_culture_gen(funcArgs):
-  populationNotZero = funcArgs[0]
-  worldCulture      = gen_world_cultural_differences() if populationNotZero else 0
-  cultureString     = "World Cultural Differences Info\n" + SEPARATOR_STRING
-  cultureString    += get_table_entry(WORLD_CULTURE_TABLE_HEADER, WORLD_CULTURE_TABLE, worldCulture) + SEPARATOR_STRING
-  return cultureString, worldCulture
-#--------------------------------------------------#
-
-# World starport generation
-#--------------------------------------------------#
-def handle_world_starport_gen(funcArgs):
-  populationNotZero  = funcArgs[0]
-  worldStarport      = gen_world_star_port() if populationNotZero else 0
-  worldStarportTable = gen_world_star_port_table(worldStarport)
-  starportString     = "World Starport Info\n" + SEPARATOR_STRING
-  starportString    += get_table_entry(WORLD_STAR_PORT_TABLE_HEADER, worldStarportTable, worldStarport) + SEPARATOR_STRING
-  return starportString, worldStarport
-#--------------------------------------------------#
-
-# World tech generation
-#--------------------------------------------------#
-def handle_world_tech_gen(funcArgs):
-  populationNotZero  = funcArgs[0]
-  worldStarport      = funcArgs[1]
-  worldSize          = funcArgs[2]
-  worldAtmosphere    = funcArgs[3]
-  worldHydrographics = funcArgs[4]
-  worldPopulation    = funcArgs[5]
-  worldGovernment    = funcArgs[6]
-  worldTechLevel     = gen_world_tech_level(worldStarport, worldSize, worldAtmosphere, worldHydrographics, worldPopulation, worldGovernment) if populationNotZero else 0
-  techString         = "World Technology Info\n" + SEPARATOR_STRING
-  techString        += "Tech Level: " + str(worldTechLevel) + NEW_LINE + SEPARATOR_STRING
-  return techString, worldTechLevel
-#--------------------------------------------------#
-
-# World trade code generation
-#--------------------------------------------------#
 def handle_world_trade_gen(funcArgs):
   worldSize           = funcArgs[0]
   worldAtmosphere     = funcArgs[1]
@@ -733,7 +697,7 @@ def generate_world(worldGenOption):
 
   except KeyboardInterrupt:
     clear_screen()
-    print("Failed to generate world\n")
+    print("Failed to generate World\n")
     printString = ""
 
   return printString

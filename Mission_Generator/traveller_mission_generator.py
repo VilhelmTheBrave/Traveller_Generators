@@ -58,6 +58,12 @@ MISSION_PATRON_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["None
   ["Family Relative"                   ],
   ["Agent of a Foreign Power"          ],
   ["Imperial Agent"                    ])
+
+def handle_mission_patron_gen(funcArgs):
+  missionPatron = roll_d_six_six()
+  patronString  = "Mission Patron Info\n" + SEPARATOR_STRING
+  patronString += get_table_entry(MISSION_PATRON_TABLE_HEADER, MISSION_PATRON_TABLE, missionPatron) + SEPARATOR_STRING
+  return patronString, missionPatron
 #--------------------------------------------------#
 
 # Mission objective
@@ -106,6 +112,12 @@ MISSION_OBJECTIVE_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["N
   ["Save a " + TARGET                                         ],
   ["Aid a " + TARGET                                          ],
   ["It’s a trap – the patron intends to betray the characters"])
+
+def handle_mission_obj_gen(funcArgs):
+  missionObj = roll_d_six_six()
+  objString  = "Mission Objective Info\n" + SEPARATOR_STRING
+  objString += get_table_entry(MISSION_OBJECTIVE_TABLE_HEADER, MISSION_OBJECTIVE_TABLE, missionObj) + SEPARATOR_STRING
+  return objString, missionObj
 #--------------------------------------------------#
 
 # Mission target
@@ -154,6 +166,19 @@ MISSION_TARGET_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["None
   ["Police Cutter"                     ],
   ["Space Station"                     ],
   ["Warship"                           ])
+
+def handle_mission_target_gen(funcArgs):
+  missiontarget    = roll_d_six_six()
+  targetString     = "Mission Target Info\n" + SEPARATOR_STRING
+  tempTargetString = get_table_entry(MISSION_TARGET_TABLE_HEADER, MISSION_TARGET_TABLE, missiontarget)
+  if PATRON in tempTargetString:
+    targetString += get_table_entry(MISSION_PATRON_TABLE_HEADER, MISSION_PATRON_TABLE, roll_d_six_six())
+  elif OPPOSITION in tempTargetString:
+    targetString += get_table_entry(MISSION_OPPOSITION_TABLE_HEADER, MISSION_OPPOSITION_TABLE, roll_d_six_six())
+  else:
+    targetString += tempTargetString
+  targetString += SEPARATOR_STRING
+  return targetString, missiontarget
 #--------------------------------------------------#
 
 # Mission opposition
@@ -202,44 +227,7 @@ MISSION_OPPOSITION_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["
   ["Government officials"                  ],
   ["Target is protected by a third party"  ],
   ["Hostages"                              ])
-#--------------------------------------------------#
 
-# Mission patron generation
-#--------------------------------------------------#
-def handle_mission_patron_gen(funcArgs):
-  missionPatron = roll_d_six_six()
-  patronString  = "Mission Patron Info\n" + SEPARATOR_STRING
-  patronString += get_table_entry(MISSION_PATRON_TABLE_HEADER, MISSION_PATRON_TABLE, missionPatron) + SEPARATOR_STRING
-  return patronString, missionPatron
-#--------------------------------------------------#
-
-# Mission objective generation
-#--------------------------------------------------#
-def handle_mission_obj_gen(funcArgs):
-  missionObj = roll_d_six_six()
-  objString  = "Mission Objective Info\n" + SEPARATOR_STRING
-  objString += get_table_entry(MISSION_OBJECTIVE_TABLE_HEADER, MISSION_OBJECTIVE_TABLE, missionObj) + SEPARATOR_STRING
-  return objString, missionObj
-#--------------------------------------------------#
-
-# Mission target generation
-#--------------------------------------------------#
-def handle_mission_target_gen(funcArgs):
-  missiontarget    = roll_d_six_six()
-  targetString     = "Mission Target Info\n" + SEPARATOR_STRING
-  tempTargetString = get_table_entry(MISSION_TARGET_TABLE_HEADER, MISSION_TARGET_TABLE, missiontarget)
-  if PATRON in tempTargetString:
-    targetString += get_table_entry(MISSION_PATRON_TABLE_HEADER, MISSION_PATRON_TABLE, roll_d_six_six())
-  elif OPPOSITION in tempTargetString:
-    targetString += get_table_entry(MISSION_OPPOSITION_TABLE_HEADER, MISSION_OPPOSITION_TABLE, roll_d_six_six())
-  else:
-    targetString += tempTargetString
-  targetString += SEPARATOR_STRING
-  return targetString, missiontarget
-#--------------------------------------------------#
-
-# Mission opposition generation
-#--------------------------------------------------#
 def handle_mission_opp_gen(funcArgs):
   missionOpp = roll_d_six_six()
   oppString  = "Mission Opposition Info\n" + SEPARATOR_STRING
