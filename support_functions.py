@@ -96,18 +96,9 @@ def get_option_values(optionList):
 # Gets an option using its value
 #--------------------------------------------------#
 def get_option_by_value(optionList, optionValue):
-  retOption = 0
+  retOption = 999
   for option in optionList:
     retOption = option if option.value == optionValue else retOption
-  return retOption
-#--------------------------------------------------#
-
-# Gets an option using its name
-#--------------------------------------------------#
-def get_option_by_name(optionList, optionName):
-  retOption = 0
-  for option in optionList:
-    retOption = option if option.name == optionName else retOption
   return retOption
 #--------------------------------------------------#
 
