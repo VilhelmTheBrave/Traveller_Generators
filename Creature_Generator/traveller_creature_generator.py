@@ -71,7 +71,7 @@ def gen_creature_movement():
   return roll_dice() - 1
 
 def handle_creature_movement_gen(funcArgs):
-  chosenTerrain = funcArgs[0]
+  chosenTerrain    = funcArgs[0]
   creatureMovement = gen_creature_movement()
   if chosenTerrain in (TERRAIN_OPTIONS.Clear, TERRAIN_OPTIONS.Jungle):
     movementTable = CLEAR_JUNGLE_MOVEMENT_TABLE
@@ -417,8 +417,8 @@ def gen_creature_armour():
 
 def handle_creature_armour_gen(funcArgs):
   creatureArmour = gen_creature_armour()
-  armourString = "Creature Armour Info\n" + SEPARATOR_STRING
-  armourString += get_table_entry(CREATURE_ARMOUR_TABLE_HEADER, CREATURE_ARMOUR_TABLE, creatureArmour) + SEPARATOR_STRING
+  armourString   = "Creature Armour Info\n" + SEPARATOR_STRING
+  armourString  += get_table_entry(CREATURE_ARMOUR_TABLE_HEADER, CREATURE_ARMOUR_TABLE, creatureArmour) + SEPARATOR_STRING
   return armourString, creatureArmour
 #--------------------------------------------------#
 
@@ -454,7 +454,7 @@ def gen_creature_skills(creatureBehavior):
   else:
     0 # Do Nothing
 
-  fullSkillsList = [survival, athletics, recon, melee, stealth, persuade, deception]
+  fullSkillsList     = [survival, athletics, recon, melee, stealth, persuade, deception]
   creatureSkillsList = []
   for skill in fullSkillsList:
     if skill[0] >= 0:

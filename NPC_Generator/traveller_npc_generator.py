@@ -232,7 +232,7 @@ def gen_npc_skills(careerInfo):
 
   availSkills    = list(careerSkills.union(specSkills))
   numAvailSkills = len(availSkills) - 1
-  skillPoints = (careerRank * 6)
+  skillPoints    = careerRank * 6
 
   i = 0
   skillDict = dict({})
@@ -249,7 +249,7 @@ def gen_npc_skills(careerInfo):
   return skillDict
 
 def handle_npc_skills_gen(funcArgs):
-  npcSkills     = gen_npc_skills(funcArgs[0])
+  npcSkills    = gen_npc_skills(funcArgs[0])
   skillString  = "NPC Skills Info\n" + SEPARATOR_STRING
   listOfSkills = list(npcSkills.keys())
   for skill in listOfSkills:
@@ -306,7 +306,7 @@ NPC_TRAIT_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["None"], [
   ["Possesses telepathy or other unusual quality"])
 
 def handle_npc_trait_gen(funcArgs):
-  npcTrait  = roll_d_six_six()
+  npcTrait     = roll_d_six_six()
   traitString  = "NPC Trait Info\n" + SEPARATOR_STRING
   traitString += get_table_entry(NPC_TRAIT_TABLE_HEADER, NPC_TRAIT_TABLE, npcTrait) + SEPARATOR_STRING
   return traitString, npcTrait

@@ -151,7 +151,7 @@ URBAN_ACTIVITY_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["None
 def handle_encounter_activity_gen(funcArgs):
   encounterLocation = funcArgs[0]
   encounterActivity = roll_d_six_six()
-  actString  = "Encounter Activity Info\n" + SEPARATOR_STRING
+  actString         = "Encounter Activity Info\n" + SEPARATOR_STRING
   if encounterLocation == LOCATION_OPTIONS.Starport:
     activityTable = STARPORT_ACTIVITY_TABLE
   elif encounterLocation == LOCATION_OPTIONS.Rural:
@@ -175,7 +175,7 @@ def generate_encounter(encounterGenOption):
     if selectedLocation == LOCATION_OPTIONS.Random:
       selectedLocation = get_option_by_value(LOCATION_OPTIONS, roll_dice(1,1,3))
 
-    printString = "Encounter Location Info\n" + SEPARATOR_STRING
+    printString  = "Encounter Location Info\n" + SEPARATOR_STRING
     printString += "Location: " + selectedLocation.name  + NEW_LINE + SEPARATOR_STRING + NEW_LINE
 
     # Activity
