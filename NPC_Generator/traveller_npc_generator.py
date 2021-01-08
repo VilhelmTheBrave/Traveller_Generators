@@ -232,7 +232,7 @@ def gen_npc_skills(careerInfo):
 
   availSkills    = list(careerSkills.union(specSkills))
   numAvailSkills = len(availSkills) - 1
-  skillPoints = (careerRank * 4) + roll_dice()
+  skillPoints = (careerRank * 6)
 
   i = 0
   skillDict = dict({})
