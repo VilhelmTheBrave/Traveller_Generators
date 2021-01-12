@@ -5,6 +5,18 @@ from sys import path
 path.append("..")
 from support_functions import *
 
+# Combines a list of strings into a single string
+#--------------------------------------------------#
+def convert_slist_to_string(listOfStrings):
+  stringListLen = len(listOfStrings)
+  retString = ""
+  for entry in listOfStrings:
+    retString += ", " if len(retString) > 0 and len(entry) > 0 else ""
+    retString += entry
+  retString = "None" if len(retString) == 0 else retString
+  return retString
+#--------------------------------------------------#
+
 # World Size
 #--------------------------------------------------#
 WORLD_SIZE_TABLE_HEADER = ("World Size (km)", "Surface Gravity (gs)")

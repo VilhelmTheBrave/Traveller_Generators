@@ -14,6 +14,49 @@ PATRON              = "Patron"
 
 TRADE_GOODS_TABLE_HEADER = ("Trade Good Type", "Available", "Tons", "Base Price (Cr)", "Purchase DM", "Sale DM")
 
+MISSION_PATRON_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"],
+  ["Assassin"                          ],
+  ["Smuggler"                          ],
+  ["Terrorist"                         ],
+  ["Embezzler"                         ],
+  ["Thief"                             ],
+  ["Revolutionary"                     ],
+  ["None"], ["None"], ["None"], ["None"],
+  ["Clerk"                             ],
+  ["Administrator"                     ],
+  ["Mayor"                             ],
+  ["Minor Noble"                       ],
+  ["Physician"                         ],
+  ["Tribal Leader"                     ],
+  ["None"], ["None"], ["None"], ["None"],
+  ["Diplomat"                          ],
+  ["Courier"                           ],
+  ["Spy"                               ],
+  ["Ambassador"                        ],
+  ["Noble"                             ],
+  ["Police Officer"                    ],
+  ["None"], ["None"], ["None"], ["None"],
+  ["Merchant"                          ],
+  ["Free Trader"                       ],
+  ["Broker"                            ],
+  ["Corporate Executive"               ],
+  ["Corporate Agent"                   ],
+  ["Financier"                         ],
+  ["None"], ["None"], ["None"], ["None"],
+  ["Belter"                            ],
+  ["Researcher"                        ],
+  ["Naval Officer"                     ],
+  ["Pilot"                             ],
+  ["Starport Administrator"            ],
+  ["Scout"                             ],
+  ["None"], ["None"], ["None"], ["None"],
+  ["Alien"                             ],
+  ["Playboy"                           ],
+  ["Stowaway"                          ],
+  ["Family Relative"                   ],
+  ["Agent of a Foreign Power"          ],
+  ["Imperial Agent"                    ])
+
 class GENERATOR_OPTIONS(Enum):
   Generate_Random        = 1
   Interactive_Generation = 2
@@ -56,18 +99,6 @@ def get_table_entry(header, table, index):
     entryString += header[i] + ": " + table[index][i] + "\n"
     i += 1
   return entryString
-#--------------------------------------------------#
-
-# Combines a list of strings into a single string
-#--------------------------------------------------#
-def convert_slist_to_string(listOfStrings):
-  stringListLen = len(listOfStrings)
-  retString = ""
-  for entry in listOfStrings:
-    retString += ", " if len(retString) > 0 and len(entry) > 0 else ""
-    retString += entry
-  retString = "None" if len(retString) == 0 else retString
-  return retString
 #--------------------------------------------------#
 
 # Clears the terminal
@@ -269,50 +300,4 @@ def get_random_trade_goods():
                 ("Illegal Weapons"     , "Industrial, High Technology"                   , str(roll_dice() * 5), "150000", "Industrial +0, High Technology +2"                , "Poor +6, Amber Zone +8, Red Zone +10"                           ),
                 ("Exotics"             , "Varies"                                        , "Varies"            , "Varies", "Varies"                                           , "Varies"                                                         ))
   return get_table_entry(TRADE_GOODS_TABLE_HEADER, tradeTable, roll_d_six_six())
-#--------------------------------------------------#
-
-# Patron table
-#--------------------------------------------------#
-MISSION_PATRON_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"],
-  ["Assassin"                          ],
-  ["Smuggler"                          ],
-  ["Terrorist"                         ],
-  ["Embezzler"                         ],
-  ["Thief"                             ],
-  ["Revolutionary"                     ],
-  ["None"], ["None"], ["None"], ["None"],
-  ["Clerk"                             ],
-  ["Administrator"                     ],
-  ["Mayor"                             ],
-  ["Minor Noble"                       ],
-  ["Physician"                         ],
-  ["Tribal Leader"                     ],
-  ["None"], ["None"], ["None"], ["None"],
-  ["Diplomat"                          ],
-  ["Courier"                           ],
-  ["Spy"                               ],
-  ["Ambassador"                        ],
-  ["Noble"                             ],
-  ["Police Officer"                    ],
-  ["None"], ["None"], ["None"], ["None"],
-  ["Merchant"                          ],
-  ["Free Trader"                       ],
-  ["Broker"                            ],
-  ["Corporate Executive"               ],
-  ["Corporate Agent"                   ],
-  ["Financier"                         ],
-  ["None"], ["None"], ["None"], ["None"],
-  ["Belter"                            ],
-  ["Researcher"                        ],
-  ["Naval Officer"                     ],
-  ["Pilot"                             ],
-  ["Starport Administrator"            ],
-  ["Scout"                             ],
-  ["None"], ["None"], ["None"], ["None"],
-  ["Alien"                             ],
-  ["Playboy"                           ],
-  ["Stowaway"                          ],
-  ["Family Relative"                   ],
-  ["Agent of a Foreign Power"          ],
-  ["Imperial Agent"                    ])
 #--------------------------------------------------#

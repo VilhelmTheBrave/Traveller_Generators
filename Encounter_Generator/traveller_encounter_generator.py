@@ -22,7 +22,7 @@ class LOCATION_OPTIONS(Enum):
   Space_Settled       = 6
   Space_Border_System = 7
   Space_Wild          = 8
-  Space_Emptry        = 9
+  Space_Empty         = 9
 #--------------------------------------------------#
 
 # Encounter activities
@@ -303,7 +303,7 @@ def generate_encounter(encounterGenOption):
       selectedLocation = LOCATION_OPTIONS.Random
     
     if selectedLocation == LOCATION_OPTIONS.Random:
-      selectedLocation = get_option_by_value(LOCATION_OPTIONS, roll_dice(1,1,4))
+      selectedLocation = get_option_by_value(LOCATION_OPTIONS, roll_dice(1,1,9))
 
     printString  = "Encounter Location Info\n" + SEPARATOR_STRING
     printString += "Location: " + selectedLocation.name  + NEW_LINE + SEPARATOR_STRING + NEW_LINE
