@@ -464,8 +464,10 @@ def gen_creature_skills(creatureBehavior):
   creatureSkillsListLen = len(creatureSkillsList) - 1
   i = 0
   while i < numRandomRanks:
-    creatureSkillsList[roll_dice(1,0,creatureSkillsListLen)][0] += 1
-    i += 1
+    chosenSkill = roll_dice(1,0,creatureSkillsListLen)
+    if creatureSkillsList[chosenSkill][0] < 3:
+      creatureSkillsList[chosenSkill][0] += 1
+      i += 1
   
   skillString = ""
   for creatureSkill in creatureSkillsList:
