@@ -243,7 +243,6 @@ def get_space_activity(location):
   elif location == LOCATION_OPTIONS.Space_High_Traffic:
     activityMod = 2
   elif location == LOCATION_OPTIONS.Space_Settled:
-    spaceActivity = roll_d_six_six(1)
     activityMod = 1
   elif location == LOCATION_OPTIONS.Space_Border_System:
     activityMod = 0
