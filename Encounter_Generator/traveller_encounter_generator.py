@@ -6,13 +6,23 @@ from sys import path
 path.append("..")
 from support_functions import *
 
-# Global Enums
+# Global Vars
 #--------------------------------------------------#
+HOSTILE_VESSEL   = "Hostile vessel"
+DUMPED_CARGO_POD = "Dumped cargo pod"
+ORBITAL_FACTORY  = "Orbital factory"
+
 class LOCATION_OPTIONS(Enum):
-  Random   = 0
-  Starport = 1
-  Rural    = 2
-  Urban    = 3
+  Random              = 0
+  Starport            = 1
+  Rural               = 2
+  Urban               = 3
+  Space_Highport      = 4
+  Space_High_Traffic  = 5
+  Space_Settled       = 6
+  Space_Border_System = 7
+  Space_Wild          = 8
+  Space_Emptry        = 9
 #--------------------------------------------------#
 
 # Encounter activities
@@ -148,17 +158,138 @@ URBAN_ACTIVITY_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["None
   ["Sports event"                                              ],
   ["Imperial Dignitary"                                        ])
 
+def get_space_activity(location):
+  alienVesselRoll = roll_dice()
+  if alienVesselRoll <= 3:
+    alienVesselType = "trader"
+  elif alienVesselRoll <= 5:
+    alienVesselType = "explorer"
+  else:
+    alienVesselType = "spy"
+
+  activityTable = ("",
+                   "Alien derelict (possible salvage)"                              ,
+                   "Solar Flare (unavoidable - " + str(roll_dice() * 100) + " rads)",
+                   "Asteroid (empty rock)"                                          ,
+                   "Ore-bearing asteroid (possible mining)"                         ,
+                   "Alien vessel (on a mission)"                                    ,
+                   "Rock hermit (inhabited rock)"                                   ,
+                   "", "", "", "",
+                   "Pirate (unavoidable)"                                           ,
+                   "Derelict vessel (possible salvage)"                             ,
+                   "Space station" + (" (derelict)" if roll_dice() <= 4 else "")    ,
+                   "Comet (may be ancient derelict at its core)"                    ,
+                   "Ore-bearing asteroid (possible mining)"                         ,
+                   "Ship in distress"                                               ,
+                   "", "", "", "",
+                   "Pirate"                                                         ,
+                   "Free trader"                                                    ,
+                   "Micrometeorite storm (unavoidable collision)"                   ,
+                   HOSTILE_VESSEL                                                   ,
+                   "Mining ship"                                                    ,
+                   "Scout ship"                                                     ,
+                   "", "", "", "",
+                   "Alien vessel (" + alienVesselType + ")"                         ,
+                   "Space junk (possible salvage)"                                  ,
+                   "Far trader"                                                     ,
+                   "Derelict satellite (possible salvage)"                          ,
+                   "Safari or science vessel"                                       ,
+                   "Escape pod"                                                     ,
+                   "", "", "", "",
+                   "Passenger liner"                                                ,
+                   "Ship in distress"                                               ,
+                   "Colony ship or passenger liner"                                 ,
+                   "Scout ship"                                                     ,
+                   "Space station"                                                  ,
+                   "X-boat courier"                                                 ,
+                   "", "", "", "",
+                   HOSTILE_VESSEL                                                   ,
+                   "Garbage ejected from a ship"                                    ,
+                   "Medical ship or hospital"                                       ,
+                   "Lab ship or scout"                                              ,
+                   PATRON                                                           ,
+                   "Police ship"                                                    ,
+                   "", "", "", "",
+                   "Unusually daring pirate"                                        ,
+                   "Noble yacht"                                                    ,
+                   "Warship"                                                        ,
+                   "Cargo vessel"                                                   ,
+                   "Navigational buoy or beacon"                                    ,
+                   "Unusual ship"                                                   ,
+                   "", "", "", "",
+                   "Collision with space junk (unavoidable collision)"              ,
+                   "Automated vessel"                                               ,
+                   "Free trader"                                                    ,
+                   DUMPED_CARGO_POD                                                 ,
+                   "Police vessel"                                                  ,
+                   "Cargo hauler"                                                   ,
+                   "", "", "", "",
+                   "Passenger liner"                                                ,
+                   ORBITAL_FACTORY                                                  ,
+                   "Orbital habitat"                                                ,
+                   "Orbital habitat"                                                ,
+                   "Communications satellite"                                       ,
+                   "Defence satellite"                                              ,
+                   "", "", "", "",
+                   "Pleasure craft"                                                 ,
+                   "Space station"                                                  ,
+                   "Police vessel"                                                  ,
+                   "Cargo hauler"                                                   ,
+                   "System defence boat"                                            ,
+                   "Grand fleet warship"                                            )
+  
+  if location == LOCATION_OPTIONS.Space_Highport:
+    activityMod = 3
+  elif location == LOCATION_OPTIONS.Space_High_Traffic:
+    activityMod = 2
+  elif location == LOCATION_OPTIONS.Space_Settled:
+    spaceActivity = roll_d_six_six(1)
+    activityMod = 1
+  elif location == LOCATION_OPTIONS.Space_Border_System:
+    activityMod = 0
+  elif location == LOCATION_OPTIONS.Space_Wild:
+    activityMod = -1
+  else:
+    activityMod = -4
+  
+  spaceActivity = roll_d_six_six(activityMod)
+
+  activityString = "Activity: "
+  chosenActivity = activityTable[spaceActivity]
+  if chosenActivity == HOSTILE_VESSEL:
+    chosenVessel = activityTable[roll_d_six_six(activityMod)]
+    while True:
+      if ("vessel" in chosenVessel) and ("Derelict" not in chosenVessel) and ("Hostile" not in chosenVessel):
+        break
+      elif ("ship" in chosenVessel) and ("Garbage" not in chosenVessel) and ("distress" not in chosenVessel):
+        break
+      elif "Pirate" in chosenVessel:
+        break
+      else:
+        chosenVessel = activityTable[roll_d_six_six(activityMod)]
+    activityString += chosenActivity + (" (unavoidable)" if "unavoidable" not in chosenVessel else "") + " - " + chosenVessel  + NEW_LINE
+  elif chosenActivity == PATRON:
+    activityString += chosenActivity + " - " + MISSION_PATRON_TABLE[roll_d_six_six()][0] + " (unavoidable)" + NEW_LINE
+  elif chosenActivity == DUMPED_CARGO_POD or chosenActivity == ORBITAL_FACTORY:
+    activityString += chosenActivity + NEW_LINE + get_random_trade_goods()
+  else:
+    activityString += chosenActivity + NEW_LINE
+  activityString += SEPARATOR_STRING
+
+  return activityString
+
 def handle_encounter_activity_gen(funcArgs):
   encounterLocation = funcArgs[0]
   encounterActivity = roll_d_six_six()
   actString         = "Encounter Activity Info\n" + SEPARATOR_STRING
   if encounterLocation == LOCATION_OPTIONS.Starport:
-    activityTable = STARPORT_ACTIVITY_TABLE
+    actString +=  get_table_entry(ENCOUNTER_ACTIVITY_TABLE_HEADER, STARPORT_ACTIVITY_TABLE, encounterActivity) + SEPARATOR_STRING
   elif encounterLocation == LOCATION_OPTIONS.Rural:
-    activityTable = RURAL_ACTIVITY_TABLE
+    actString +=  get_table_entry(ENCOUNTER_ACTIVITY_TABLE_HEADER, RURAL_ACTIVITY_TABLE, encounterActivity) + SEPARATOR_STRING
+  elif encounterLocation == LOCATION_OPTIONS.Urban:
+    actString +=  get_table_entry(ENCOUNTER_ACTIVITY_TABLE_HEADER, URBAN_ACTIVITY_TABLE, encounterActivity) + SEPARATOR_STRING
   else:
-    activityTable = URBAN_ACTIVITY_TABLE
-  actString += get_table_entry(ENCOUNTER_ACTIVITY_TABLE_HEADER, activityTable, encounterActivity) + SEPARATOR_STRING
+    actString += get_space_activity(encounterLocation)
   return actString, encounterActivity
 #--------------------------------------------------#
 
@@ -173,7 +304,7 @@ def generate_encounter(encounterGenOption):
       selectedLocation = LOCATION_OPTIONS.Random
     
     if selectedLocation == LOCATION_OPTIONS.Random:
-      selectedLocation = get_option_by_value(LOCATION_OPTIONS, roll_dice(1,1,3))
+      selectedLocation = get_option_by_value(LOCATION_OPTIONS, roll_dice(1,1,4))
 
     printString  = "Encounter Location Info\n" + SEPARATOR_STRING
     printString += "Location: " + selectedLocation.name  + NEW_LINE + SEPARATOR_STRING + NEW_LINE

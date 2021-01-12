@@ -7,57 +7,16 @@ from support_functions import *
 
 # Global Vars
 #--------------------------------------------------#
-PATRON     = "Patron"
-OPPOSITION = "Opposition"
-TARGET     = "target"
+OPPOSITION          = "Opposition"
+TARGET              = "target"
+COMMON_TRADE_GOODS  = "Common Trade Goods"
+RANDOM_TRADE_GOODS  = "Random Trade Goods"
+ILLEGAL_TRADE_GOODS = "Illegal Trade Goods"
 #--------------------------------------------------#
 
 # Mission patron
 #--------------------------------------------------#
 MISSION_PATRON_TABLE_HEADER = [PATRON]
-
-MISSION_PATRON_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"],
-  ["Assassin"                          ],
-  ["Smuggler"                          ],
-  ["Terrorist"                         ],
-  ["Embezzler"                         ],
-  ["Thief"                             ],
-  ["Revolutionary"                     ],
-  ["None"], ["None"], ["None"], ["None"],
-  ["Clerk"                             ],
-  ["Administrator"                     ],
-  ["Mayor"                             ],
-  ["Minor Noble"                       ],
-  ["Physician"                         ],
-  ["Tribal Leader"                     ],
-  ["None"], ["None"], ["None"], ["None"],
-  ["Diplomat"                          ],
-  ["Courier"                           ],
-  ["Spy"                               ],
-  ["Ambassador"                        ],
-  ["Noble"                             ],
-  ["Police Officer"                    ],
-  ["None"], ["None"], ["None"], ["None"],
-  ["Merchant"                          ],
-  ["Free Trader"                       ],
-  ["Broker"                            ],
-  ["Corporate Executive"               ],
-  ["Corporate Agent"                   ],
-  ["Financier"                         ],
-  ["None"], ["None"], ["None"], ["None"],
-  ["Belter"                            ],
-  ["Researcher"                        ],
-  ["Naval Officer"                     ],
-  ["Pilot"                             ],
-  ["Starport Administrator"            ],
-  ["Scout"                             ],
-  ["None"], ["None"], ["None"], ["None"],
-  ["Alien"                             ],
-  ["Playboy"                           ],
-  ["Stowaway"                          ],
-  ["Family Relative"                   ],
-  ["Agent of a Foreign Power"          ],
-  ["Imperial Agent"                    ])
 
 def handle_mission_patron_gen(funcArgs):
   missionPatron = roll_d_six_six()
@@ -125,12 +84,12 @@ def handle_mission_obj_gen(funcArgs):
 MISSION_TARGET_TABLE_HEADER = ["Target"]
 
 MISSION_TARGET_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"],
-  ["Common Trade Goods"                ],
-  ["Common Trade Goods"                ],
-  ["Random Trade Goods"                ],
-  ["Random Trade Goods"                ],
-  ["Illegal Trade Goods"               ],
-  ["Illegal Trade Goods"               ],
+  [COMMON_TRADE_GOODS                  ],
+  [COMMON_TRADE_GOODS                  ],
+  [RANDOM_TRADE_GOODS                  ],
+  [RANDOM_TRADE_GOODS                  ],
+  [ILLEGAL_TRADE_GOODS                 ],
+  [ILLEGAL_TRADE_GOODS                 ],
   ["None"], ["None"], ["None"], ["None"],
   ["Computer Data"                     ],
   ["Alien Artefact"                    ],
@@ -167,6 +126,23 @@ MISSION_TARGET_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["None
   ["Space Station"                     ],
   ["Warship"                           ])
 
+def get_common_trade_goods():
+  tradeTable = (("Basic Electronics"        , "All", str(roll_dice() * 10), "10000", "Industrial +2, High Technology +3, Rich +1"             , "Non-Industrial +2, Low Technology +1, Poor +1"                  ),
+                ("Basic Machine Parts"      , "All", str(roll_dice() * 10), "10000", "Non-Agricultural +2, Industrial +5"                     , "Non-Industrial +3, Agricultural +2"                             ),
+                ("Basic Manufactured Goods" , "All", str(roll_dice() * 10), "10000", "Non-Agricultural +2, Industrial +5"                     , "Non-Industrial +3, High Population +2"                          ),
+                ("Basic Raw Materials"      , "All", str(roll_dice() * 10), "5000" , "Agricultural +3, Garden +2"                             , "Industrial +2, Poor +2"                                         ),
+                ("Basic Consumables"        , "All", str(roll_dice() * 10), "2000" , "Agricultural +3, Water World +2, Garden +1, Asteroid -4", "Asteroid +1, Fluid Oceans +1, Ice-Capped +1, High Population +1"),
+                ("Basic Ore"                , "All", str(roll_dice() * 10), "1000" , "Asteroid +4, Ice-Capped +0"                             , "Industrial +3, Non-Industrial +1"                               ))
+  return get_table_entry(TRADE_GOODS_TABLE_HEADER, tradeTable, roll_dice(1,0,5))
+
+def get_illegal_trade_goods():
+  tradeTable = (("Illegal Biochemicals", "Agricultural, Water World"                     , str(roll_dice() * 5), "50000" , "Agricultural +0, Water World +2"                  , "Industrial +6"                                                  ),
+                ("Illegal Cybernetics" , "High Technology"                               , str(roll_dice())    , "250000", "High Technology +0"                               , "Asteroid +4, Ice-Capped +4, Rich +8, Amber Zone +6, Red Zone +6"),
+                ("Illegal Drugs"       , "Asteroid, Desert, High Population, Water World", str(roll_dice())    , "100000", "Asteroid +0, Desert +0, Garden +0, Water World +0", "Rich +6, High Population +6"                                    ),
+                ("Illegal Luxuries"    , "Agricultural, Garden, Water World"             , str(roll_dice())    , "50000" , "Agricultural +2, Garden +0, Water World +1"       , "Rich +6, High Population +4"                                    ),
+                ("Illegal Weapons"     , "Industrial, High Technology"                   , str(roll_dice() * 5), "150000", "Industrial +0, High Technology +2"                , "Poor +6, Amber Zone +8, Red Zone +10"                           ))
+  return get_table_entry(TRADE_GOODS_TABLE_HEADER, tradeTable, roll_dice(1,0,4))
+
 def handle_mission_target_gen(funcArgs):
   missiontarget    = roll_d_six_six()
   targetString     = "Mission Target Info\n" + SEPARATOR_STRING
@@ -175,6 +151,12 @@ def handle_mission_target_gen(funcArgs):
     targetString += get_table_entry(MISSION_PATRON_TABLE_HEADER, MISSION_PATRON_TABLE, roll_d_six_six())
   elif OPPOSITION in tempTargetString:
     targetString += get_table_entry(MISSION_OPPOSITION_TABLE_HEADER, MISSION_OPPOSITION_TABLE, roll_d_six_six())
+  elif COMMON_TRADE_GOODS in tempTargetString:
+    targetString += get_common_trade_goods()
+  elif RANDOM_TRADE_GOODS in tempTargetString:
+    targetString += get_random_trade_goods()
+  elif ILLEGAL_TRADE_GOODS in tempTargetString:
+    targetString += get_illegal_trade_goods()
   else:
     targetString += tempTargetString
   targetString += SEPARATOR_STRING
