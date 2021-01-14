@@ -264,7 +264,7 @@ def gen_creature_characteristics_info(creatureCharNum, creatureBehaviorNum, stre
     strength  = roll_dice(7) + strengthMod
     weight    = "5000"
 
-  intelligence = str(roll_dice(1, 0, 1))
+  intelligence = str(roll_dice(1,0,1))
   instinct = str(get_creature_instinct(creatureBehaviorNum))
   return [(weight, str(strength), dexerity, endurance, intelligence, instinct)], strength
 
@@ -304,7 +304,7 @@ def handle_creature_characteristics_gen(funcArgs):
   elif creatureBehavior in (CREATURE_BEHAVIORS.Eater, CREATURE_BEHAVIORS.Filter):
     enduranceMod = 4
   elif creatureBehavior == CREATURE_BEHAVIORS.Killer:
-    coinFlip = roll_dice(1, 0, 1)
+    coinFlip = roll_dice(1,0,1)
     if coinFlip == 0:
       strengthMod = 4
     else:
@@ -424,11 +424,11 @@ def handle_creature_armour_gen(funcArgs):
 
 # Creature skills
 #--------------------------------------------------#
-def gen_creature_skills(creatureBehavior):
+def gen_creature_skills(creatureBehavior, creatureWeapons):
   survival  = [0, "Survival"]
   athletics = [0, "Athletics"]
   recon     = [0, "Recon"]
-  melee     = [1, "Melee"]
+  melee     = [0, "Melee"]
   stealth   = [-1, "Stealth"]
   persuade  = [-1, "Persuade"]
   deception = [-1, "Deception"]
@@ -454,6 +454,9 @@ def gen_creature_skills(creatureBehavior):
   else:
     0 # Do Nothing
 
+  if "None" in creatureWeapons:
+    melee[0] = -1
+
   fullSkillsList     = [survival, athletics, recon, melee, stealth, persuade, deception]
   creatureSkillsList = []
   for skill in fullSkillsList:
@@ -477,8 +480,10 @@ def gen_creature_skills(creatureBehavior):
   return skillString
 
 def handle_creature_skills_gen(funcArgs):
+  creatureBehavior = funcArgs[0]
+  creatureWeapons  = funcArgs[1]
   skillString   = "Creature Skills Info\n" + SEPARATOR_STRING
-  skillString  += gen_creature_skills(funcArgs[0])
+  skillString  += gen_creature_skills(creatureBehavior, creatureWeapons)
   return skillString, 0
 #--------------------------------------------------#
 
@@ -563,12 +568,11 @@ def generate_creature(creatureGenOption):
     printString += armourString + NEW_LINE
 
     # Behavior
-    behaviorArg = [creatureBehavior]
-    creatureGenOption, skillString, creatureSkills = do_interactive_gen_loop(creatureGenOption, handle_creature_skills_gen, behaviorArg)
+    creatureGenOption, skillString, creatureSkills = do_interactive_gen_loop(creatureGenOption, handle_creature_skills_gen, [creatureBehavior, weaponString])
     printString += skillString + NEW_LINE
 
     # Pack
-    creatureGenOption, packString, creaturePack = do_interactive_gen_loop(creatureGenOption, handle_creature_pack_gen, behaviorArg)
+    creatureGenOption, packString, creaturePack = do_interactive_gen_loop(creatureGenOption, handle_creature_pack_gen, [creatureBehavior])
     printString += packString + NEW_LINE
 
     clear_screen()
