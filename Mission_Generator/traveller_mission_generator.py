@@ -8,7 +8,6 @@ from support_functions import *
 # Global Vars
 #--------------------------------------------------#
 OPPOSITION          = "Opposition"
-TARGET              = "target"
 COMMON_TRADE_GOODS  = "Common Trade Goods"
 RANDOM_TRADE_GOODS  = "Random Trade Goods"
 ILLEGAL_TRADE_GOODS = "Illegal Trade Goods"
@@ -30,19 +29,19 @@ def handle_mission_patron_gen(funcArgs):
 MISSION_OBJECTIVE_TABLE_HEADER = ["Objective"]
 
 MISSION_OBJECTIVE_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"], ["None"],
-  ["Assassinate a " + TARGET                                  ],
-  ["Frame a " + TARGET                                        ],
-  ["Destroy a " + TARGET                                      ],
-  ["Steal from a " + TARGET                                   ],
+  ["Assassinate a target"                                     ],
+  ["Frame a target"                                           ],
+  ["Destroy a target"                                         ],
+  ["Steal from a target"                                      ],
   ["Aid in a burglary"                                        ],
   ["Stop a burglary"                                          ],
   ["None"], ["None"], ["None"], ["None"],
   ["Retrieve data or an object from a secure facility"        ],
-  ["Discredit a " + TARGET                                    ],
+  ["Discredit a target"                                       ],
   ["Find a lost cargo"                                        ],
   ["Find a lost person"                                       ],
-  ["Deceive a " + TARGET                                      ],
-  ["Sabotage a " + TARGET                                     ],
+  ["Deceive a target"                                         ],
+  ["Sabotage a target"                                        ],
   ["None"], ["None"], ["None"], ["None"],
   ["Transport goods"                                          ],
   ["Transport a person"                                       ],
@@ -55,7 +54,7 @@ MISSION_OBJECTIVE_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["N
   ["Investigate a theft"                                      ],
   ["Investigate a murder"                                     ],
   ["Investigate a mystery"                                    ],
-  ["Investigate a " + TARGET                                  ],
+  ["Investigate a target"                                     ],
   ["Investigate an event"                                     ],
   ["None"], ["None"], ["None"], ["None"],
   ["Join an expedition"                                       ],
@@ -67,9 +66,9 @@ MISSION_OBJECTIVE_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["N
   ["None"], ["None"], ["None"], ["None"],
   ["Hijack a ship"                                            ],
   ["Entertain a noble"                                        ],
-  ["Protect a " + TARGET                                      ],
-  ["Save a " + TARGET                                         ],
-  ["Aid a " + TARGET                                          ],
+  ["Protect a target"                                         ],
+  ["Save a target"                                            ],
+  ["Aid a target"                                             ],
   ["It’s a trap – the patron intends to betray the characters"])
 
 def handle_mission_obj_gen(funcArgs):
@@ -231,9 +230,8 @@ def generate_mission(missionGenOption):
     printString += objString + NEW_LINE
 
     # Target
-    if TARGET in objString:
-      missionGenOption, targetString, missiontarget = do_interactive_gen_loop(missionGenOption, handle_mission_target_gen, noArgs)
-      printString += targetString + NEW_LINE
+    missionGenOption, targetString, missiontarget = do_interactive_gen_loop(missionGenOption, handle_mission_target_gen, noArgs)
+    printString += targetString + NEW_LINE
 
     # Target
     missionGenOption, oppString, missionOpp = do_interactive_gen_loop(missionGenOption, handle_mission_opp_gen, noArgs)
