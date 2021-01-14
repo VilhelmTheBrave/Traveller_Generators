@@ -164,7 +164,7 @@ def get_random_salvage():
   damageMod   = roll_dice(1,0,6)
   salvageRoll = roll_dice(2) - damageMod
   if salvageRoll < 3:
-    salvageString = "The ship’s reactor is damaged, the ship is about to break up, there is a virus loose aboard ship, an alien monster killed the crew..." + NEW_LINE
+    salvageString = "Hazard!" + NEW_LINE + "Examples: The ship’s reactor is damaged, the ship is about to break up, there is a virus loose aboard ship, an alien monster killed the crew..." + NEW_LINE
   elif salvageRoll == 4:
     salvageString = "Nothing useful can be recovered." + NEW_LINE
   elif salvageRoll == 5:
@@ -174,9 +174,9 @@ def get_random_salvage():
   elif salvageRoll == 7:
     salvageString = "Equipment like vacc suits, medical supplies or weapons, with a total value of " + str(roll_dice(2) * 2000) + " credits." + NEW_LINE
   elif salvageRoll == 8:
-    salvageString = "Cargo\n" + get_random_trade_goods(roll_dice(2))
+    salvageString = "Cargo" + NEW_LINE + get_random_trade_goods(roll_dice(2))
   elif salvageRoll == 9:
-    salvageString = "Considerable Cargo\n" + get_random_trade_goods(roll_dice(2) * 10)
+    salvageString = "Considerable Cargo" + NEW_LINE + get_random_trade_goods(roll_dice(2) * 10)
   elif salvageRoll == 10:
     salvageString = "An alien relic, useful personal data, mail cannister or other adventure hook – or a survivor in a low berth." + NEW_LINE
   elif salvageRoll == 11:
@@ -215,7 +215,7 @@ def get_space_activity(location):
                    "Solar Flare (unignorable - " + str(roll_dice() * 100) + " rads)"                           ,
                    "Asteroid (empty rock)"                                                                     ,
                    "Ore-bearing asteroid (" + POSSIBLE_MINING + ")"                                            ,
-                   "Alien vessel (on a mission)"                                                               ,
+                   "Alien vessel on a mission"                                                                 ,
                    "Rock hermit (inhabited rock)"                                                              ,
                    "", "", "", "",
                    "Pirate (unignorable)"                                                                      ,
