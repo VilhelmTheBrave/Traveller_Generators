@@ -36,7 +36,7 @@ STARPORT_ACTIVITY_TABLE = (["None"], ["None"], ["None"], ["None"], ["None"], ["N
   ["Trade ship arrives or departs"                                                      ],
   ["Captain argues about fuel prices"                                                   ],
   ["News report about pirate activity on a starport screen draws a crowd"               ],
-  ["Bored clerk makes life diffi cult for the characters"                               ],
+  ["Bored clerk makes life difficult for the characters"                                ],
   ["Local merchant with cargo to transport seeks a ship"                                ],
   ["None"], ["None"], ["None"], ["None"],
   ["Dissident tries to claim sanctuary from planetary authorities"                      ],
