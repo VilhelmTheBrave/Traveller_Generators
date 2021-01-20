@@ -120,8 +120,8 @@ def gen_npc_stats():
   return npcStatDict
 
 def handle_npc_stats_gen(funcArgs):
-  statString   = "NPC Stats Info\n" + SEPARATOR_STRING
-  npcStatDict  = gen_npc_stats()
+  statString  = "NPC Stats Info\n" + SEPARATOR_STRING
+  npcStatDict = gen_npc_stats()
   for stat in npcStatDict.keys():
     statString += stat + ": " + str(npcStatDict[stat]) + NEW_LINE
   statString += SEPARATOR_STRING

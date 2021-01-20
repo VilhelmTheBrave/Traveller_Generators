@@ -502,7 +502,7 @@ def gen_creature_pack(creatureBehavior):
     packMod = 0
   
   packRoll = roll_dice(2) + packMod
-  packRoll = packRoll if packMod >= 0 else 0
+  packRoll = packRoll if packRoll >= 0 else 0
   return packRoll
 
 def get_number_encountered(creaturePackNum):

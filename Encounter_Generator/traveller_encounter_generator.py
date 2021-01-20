@@ -344,11 +344,11 @@ def handle_encounter_activity_gen(funcArgs):
   encounterActivity = roll_d_six_six()
   actString         = "Encounter Activity Info\n" + SEPARATOR_STRING
   if encounterLocation == LOCATION_OPTIONS.Starport:
-    actString +=  get_table_entry(ENCOUNTER_ACTIVITY_TABLE_HEADER, STARPORT_ACTIVITY_TABLE, encounterActivity) + SEPARATOR_STRING
+    actString += get_table_entry(ENCOUNTER_ACTIVITY_TABLE_HEADER, STARPORT_ACTIVITY_TABLE, encounterActivity) + SEPARATOR_STRING
   elif encounterLocation == LOCATION_OPTIONS.Rural:
-    actString +=  get_table_entry(ENCOUNTER_ACTIVITY_TABLE_HEADER, RURAL_ACTIVITY_TABLE, encounterActivity) + SEPARATOR_STRING
+    actString += get_table_entry(ENCOUNTER_ACTIVITY_TABLE_HEADER, RURAL_ACTIVITY_TABLE, encounterActivity) + SEPARATOR_STRING
   elif encounterLocation == LOCATION_OPTIONS.Urban:
-    actString +=  get_table_entry(ENCOUNTER_ACTIVITY_TABLE_HEADER, URBAN_ACTIVITY_TABLE, encounterActivity) + SEPARATOR_STRING
+    actString += get_table_entry(ENCOUNTER_ACTIVITY_TABLE_HEADER, URBAN_ACTIVITY_TABLE, encounterActivity) + SEPARATOR_STRING
   else:
     actString += get_space_activity(encounterLocation)
   return actString, encounterActivity
